@@ -235,6 +235,7 @@
   }
   .row-actions button.delete-btn:active{ background:#3a1a1a; color:#ff9b9b; }
   .row-actions button.edit-btn:active{ background:#241f3d; color:#c9c2ff; }
+  .row-actions button svg{ width:15px; height:15px; }
 
   .edit-row{
     padding:12px 4px 16px 4px;
@@ -877,6 +878,9 @@
     closeOverlay();
   });
 
+  const EDIT_ICON_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 3.5a1.7 1.7 0 0 1 2.4 2.4L7 15l-3.2.8L4.6 12.6 13.5 3.5Z"/></svg>';
+  const DELETE_ICON_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.6 9.4A1.5 1.5 0 0 0 8.1 16.8h3.8a1.5 1.5 0 0 0 1.5-1.4L14 6"/></svg>';
+
   function fmtMoney(n){
     return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
   }
@@ -1106,8 +1110,8 @@
       </div>
       <div class="expense-amt">${fmtMoney(exp.amount)}</div>
       <div class="row-actions">
-        <button class="edit-btn" aria-label="Edit">✎</button>
-        <button class="delete-btn" aria-label="Delete">🗑</button>
+        <button class="edit-btn" aria-label="Edit">${EDIT_ICON_SVG}</button>
+        <button class="delete-btn" aria-label="Delete">${DELETE_ICON_SVG}</button>
       </div>
     `;
     row.querySelector(".edit-btn").addEventListener("click", () => {
@@ -1239,8 +1243,8 @@
       <span class="category-name">${cat.name}</span>
       <span class="category-count">${count} expense${count === 1 ? "" : "s"}</span>
       <div class="row-actions">
-        <button class="edit-btn" aria-label="Rename">✎</button>
-        <button class="delete-btn" aria-label="Delete">🗑</button>
+        <button class="edit-btn" aria-label="Rename">${EDIT_ICON_SVG}</button>
+        <button class="delete-btn" aria-label="Delete">${DELETE_ICON_SVG}</button>
       </div>
     `;
     row.querySelector(".edit-btn").addEventListener("click", () => {
