@@ -150,31 +150,103 @@
   canvas#barChart{ max-height:260px; }
 
   .install-banner{
-    display:none;
-    align-items:center;
-    gap:10px;
-    background:var(--accent-soft);
-    border:1px solid #33324f;
-    color:#c9c2ff;
-    font-size:12.5px;
-    font-weight:600;
-    padding:10px 12px;
-    border-radius:12px;
-    margin-bottom:14px;
+    display:none; align-items:center; gap:10px;
+    background:var(--accent-soft); border:1px solid #33324f; color:#c9c2ff;
+    font-size:12.5px; font-weight:600; padding:10px 12px; border-radius:12px; margin-bottom:14px;
   }
   .install-banner button{
-    margin-left:auto;
-    flex:0 0 auto;
-    background:linear-gradient(135deg,#7362e0,#5040b8);
-    color:#fff;
-    border:none;
-    font-size:12px;
+    margin-left:auto; flex:0 0 auto;
+    background:linear-gradient(135deg,#7362e0,#5040b8); color:#fff; border:none;
+    font-size:12px; font-weight:800; padding:7px 12px; border-radius:8px; cursor:pointer; font-family:inherit;
+  }
+
+  /* All-expenses link + page */
+  .all-expenses-link{
+    display:block;
+    text-align:center;
+    color:#a89cff;
+    font-size:13.5px;
+    font-weight:700;
+    text-decoration:none;
+    padding:10px 0 4px 0;
+    cursor:pointer;
+  }
+  .all-expenses-link:active{ opacity:.7; }
+
+  .page-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .page-header h1{
+    flex:1;
+    font-size:17px;
     font-weight:800;
-    padding:7px 12px;
+    margin:0;
+  }
+  .icon-btn{
+    flex:0 0 auto;
+    width:34px; height:34px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    font-size:16px;
+    font-family:inherit;
+  }
+  .icon-btn:active{ background:#1e2032; }
+
+  .expense-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .expense-row:last-child{ border-bottom:none; }
+  .expense-main{ flex:1; min-width:0; }
+  .expense-store{ font-size:14.5px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .expense-meta{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .expense-amt{ font-size:14.5px; font-weight:800; color:var(--ink); flex:0 0 auto; margin-right:2px; }
+  .row-actions{ display:flex; gap:6px; flex:0 0 auto; }
+  .row-actions button{
+    width:30px; height:30px;
     border-radius:8px;
+    border:1px solid var(--border);
+    background:#1e2032;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:inherit;
+  }
+  .row-actions button.delete-btn:active{ background:#3a1a1a; color:#ff9b9b; }
+  .row-actions button.edit-btn:active{ background:#241f3d; color:#c9c2ff; }
+
+  .edit-row{
+    padding:12px 4px 16px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .edit-row .field{ margin-bottom:10px; }
+  .edit-row label{ font-size:11.5px; margin-bottom:4px; }
+  .edit-row input, .edit-row select{ padding:10px 12px; font-size:14px; }
+  .edit-actions{ display:flex; gap:8px; margin-top:6px; }
+  .edit-actions button{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    border:none;
+    font-size:13.5px;
+    font-weight:800;
     cursor:pointer;
     font-family:inherit;
   }
+  .save-btn{ background:linear-gradient(135deg,#7362e0,#5040b8); color:#fff; }
+  .cancel-btn{ background:#1e2032; color:var(--ink-soft); border:1px solid var(--border) !important; }
+  .save-btn:disabled{ opacity:.5; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -239,6 +311,7 @@
         <div id="barList"></div>
         <div id="barEmpty" class="empty-state" style="display:none;">No expenses in this category for this month.</div>
         <div class="axis-note" id="barAxisNote" style="display:none;">Amount ($) — % of category total shown at right</div>
+        <a class="all-expenses-link" id="allExpensesLink">All expenses →</a>
       </div>
     </section>
 
@@ -289,6 +362,19 @@
       <button class="new-expense-btn" id="newExpenseBtn">+ New expense</button>
     </section>
 
+    <!-- SCREEN 4: ALL EXPENSES -->
+    <section class="screen" id="screen-all-expenses">
+      <div class="page-header">
+        <h1 id="allExpensesTitle">All expenses</h1>
+        <button class="icon-btn" id="closeAllExpensesBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="error-note" id="allExpensesErrorNote"></div>
+      <div class="card" style="padding:8px 12px;">
+        <div id="allExpensesList"></div>
+        <div id="allExpensesEmpty" class="empty-state" style="display:none;">No expenses for this month yet.</div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -329,25 +415,23 @@
   let selectedMonthIndex = CURRENT_MONTH_INDEX;
   let pieChart = null;
   let highlightedCategory = null;
+  let editingRowId = null;
+  let previousScreen = "dashboard";
 
   function showError(msg, detail){
     const full = "⚠️ " + msg + (detail ? "\n" + detail : "");
-    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote")].forEach(el => {
+    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote"), document.getElementById("allExpensesErrorNote")].forEach(el => {
       if(!el) return;
       el.style.display = "flex";
       el.textContent = full;
     });
   }
   function clearError(){
-    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote")].forEach(el => {
+    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote"), document.getElementById("allExpensesErrorNote")].forEach(el => {
       if(el){ el.style.display = "none"; el.textContent = ""; }
     });
   }
 
-  // Mobile Safari occasionally throws "TypeError: Load failed" for a fetch
-  // that gets interrupted (network switch, weak signal, tab backgrounding).
-  // Retrying a couple of times with a short delay resolves the vast majority
-  // of these without the person needing to do anything.
   async function withRetry(fn, attempts = 3, delayMs = 600){
     let lastErr = null;
     for(let i = 0; i < attempts; i++){
@@ -413,12 +497,47 @@
     }
   }
 
+  async function updateExpenseDb(id, fields){
+    if(!CONFIG_OK) return null;
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase.from("expenses").update(fields).eq("id", id).select()
+      );
+      if(error){
+        showError("Couldn't save your changes.", error.message + (error.hint ? " — " + error.hint : ""));
+        return null;
+      }
+      return data && data[0] ? { ...data[0], amount: Number(data[0].amount) } : null;
+    }catch(err){
+      showError("Couldn't save your changes.", "The connection was interrupted. Check your signal/WiFi and try again. (" + err.message + ")");
+      return null;
+    }
+  }
+
+  async function deleteExpenseDb(id){
+    if(!CONFIG_OK) return false;
+    try{
+      const { error } = await withRetry(() =>
+        supabase.from("expenses").delete().eq("id", id)
+      );
+      if(error){
+        showError("Couldn't delete that expense.", error.message + (error.hint ? " — " + error.hint : ""));
+        return false;
+      }
+      return true;
+    }catch(err){
+      showError("Couldn't delete that expense.", "The connection was interrupted. Check your signal/WiFi and try again. (" + err.message + ")");
+      return false;
+    }
+  }
+
   const monthSelect = document.getElementById("monthSelect");
   const tabBtns = document.querySelectorAll(".tab-btn");
   const screens = {
     dashboard: document.getElementById("screen-dashboard"),
     "new-expense": document.getElementById("screen-new-expense"),
-    confirmation: document.getElementById("screen-confirmation")
+    confirmation: document.getElementById("screen-confirmation"),
+    "all-expenses": document.getElementById("screen-all-expenses")
   };
   const summaryMonthLabel = document.getElementById("summaryMonthLabel");
   const monthlyTotalEl = document.getElementById("monthlyTotal");
@@ -442,6 +561,12 @@
   const confirmLine = document.getElementById("confirmLine");
   const newExpenseBtn = document.getElementById("newExpenseBtn");
 
+  const allExpensesLink = document.getElementById("allExpensesLink");
+  const closeAllExpensesBtn = document.getElementById("closeAllExpensesBtn");
+  const allExpensesTitle = document.getElementById("allExpensesTitle");
+  const allExpensesList = document.getElementById("allExpensesList");
+  const allExpensesEmpty = document.getElementById("allExpensesEmpty");
+
   const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
   function buildMonthOptions(){
@@ -459,9 +584,11 @@
     selectedMonthIndex = parseInt(monthSelect.value, 10);
     selectedYear = CURRENT_YEAR;
     highlightedCategory = null;
+    editingRowId = null;
     renderDashboard();
     renderBarChart();
     renderFormLockState();
+    renderAllExpenses();
   });
 
   function buildCategoryDropdowns(){
@@ -491,17 +618,43 @@
   function switchTab(target){
     tabBtns.forEach(b => b.classList.toggle("active", b.getAttribute("data-tab") === target));
     Object.keys(screens).forEach(key => {
-      if(key === "confirmation") return;
+      if(key === "confirmation" || key === "all-expenses") return;
       screens[key].classList.toggle("active", key === target);
     });
     screens.confirmation.classList.remove("active");
+    screens["all-expenses"].classList.remove("active");
     if(target === "new-expense"){
       renderFormLockState();
     }
+    if(target === "dashboard" || target === "new-expense"){
+      previousScreen = target;
+    }
   }
+
+  function openAllExpenses(){
+    editingRowId = null;
+    Object.keys(screens).forEach(key => screens[key].classList.remove("active"));
+    screens["all-expenses"].classList.add("active");
+    tabBtns.forEach(b => b.classList.remove("active"));
+    renderAllExpenses();
+  }
+
+  function closeAllExpenses(){
+    editingRowId = null;
+    Object.keys(screens).forEach(key => screens[key].classList.remove("active"));
+    screens[previousScreen].classList.add("active");
+    tabBtns.forEach(b => b.classList.toggle("active", b.getAttribute("data-tab") === previousScreen));
+  }
+
+  allExpensesLink.addEventListener("click", openAllExpenses);
+  closeAllExpensesBtn.addEventListener("click", closeAllExpenses);
 
   function fmtMoney(n){
     return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtDateShort(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   }
 
   function isCurrentMonthSelected(){
@@ -693,6 +846,143 @@
     });
   }
 
+  /* ---------------- All Expenses page ---------------- */
+  function renderAllExpenses(){
+    const monthLabel = MONTH_NAMES[selectedMonthIndex] + " " + selectedYear;
+    allExpensesTitle.textContent = monthLabel;
+
+    const list = expensesForSelectedMonth().slice().sort((a,b) => b.date.localeCompare(a.date));
+
+    allExpensesList.innerHTML = "";
+    if(list.length === 0){
+      allExpensesEmpty.style.display = "block";
+      return;
+    }
+    allExpensesEmpty.style.display = "none";
+
+    list.forEach(exp => {
+      if(editingRowId === exp.id){
+        allExpensesList.appendChild(buildEditRow(exp));
+      } else {
+        allExpensesList.appendChild(buildDisplayRow(exp));
+      }
+    });
+  }
+
+  function buildDisplayRow(exp){
+    const row = document.createElement("div");
+    row.className = "expense-row";
+    row.innerHTML = `
+      <div class="expense-main">
+        <div class="expense-store">${exp.store}</div>
+        <div class="expense-meta">${fmtDateShort(exp.date)} · ${exp.category}</div>
+      </div>
+      <div class="expense-amt">${fmtMoney(exp.amount)}</div>
+      <div class="row-actions">
+        <button class="edit-btn" aria-label="Edit">✎</button>
+        <button class="delete-btn" aria-label="Delete">🗑</button>
+      </div>
+    `;
+    row.querySelector(".edit-btn").addEventListener("click", () => {
+      editingRowId = exp.id;
+      renderAllExpenses();
+    });
+    row.querySelector(".delete-btn").addEventListener("click", () => handleDelete(exp));
+    return row;
+  }
+
+  function buildEditRow(exp){
+    const row = document.createElement("div");
+    row.className = "edit-row";
+
+    const catOptions = CATEGORIES.map(c =>
+      `<option value="${c}" ${c === exp.category ? "selected" : ""}>${c}</option>`
+    ).join("");
+
+    row.innerHTML = `
+      <div class="field">
+        <label>Date</label>
+        <input type="date" class="edit-date" value="${exp.date}">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select class="edit-category form-input">${catOptions}</select>
+      </div>
+      <div class="field">
+        <label>Amount</label>
+        <div class="amount-wrap">
+          <input type="number" class="edit-amount" step="0.01" min="0.01" value="${exp.amount}">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Store/Business</label>
+        <input type="text" class="edit-store" value="${exp.store.replace(/"/g, "&quot;")}">
+      </div>
+      <div class="edit-actions">
+        <button class="cancel-btn" type="button">Cancel</button>
+        <button class="save-btn" type="button">Save</button>
+      </div>
+    `;
+
+    row.querySelector(".cancel-btn").addEventListener("click", () => {
+      editingRowId = null;
+      clearError();
+      renderAllExpenses();
+    });
+
+    row.querySelector(".save-btn").addEventListener("click", async () => {
+      const saveBtn = row.querySelector(".save-btn");
+      const newDate = row.querySelector(".edit-date").value;
+      const newCategory = row.querySelector(".edit-category").value;
+      const newAmount = parseFloat(row.querySelector(".edit-amount").value);
+      const newStore = row.querySelector(".edit-store").value.trim();
+
+      if(!newDate || !newCategory || !newStore || !newAmount || newAmount <= 0){
+        showError("Please fill in every field with a valid value before saving.");
+        return;
+      }
+
+      clearError();
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving…";
+
+      const updated = await updateExpenseDb(exp.id, {
+        date: newDate, category: newCategory, amount: newAmount, store: newStore
+      });
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save";
+
+      if(!updated) return;
+
+      const idx = expenses.findIndex(e => e.id === exp.id);
+      if(idx !== -1) expenses[idx] = updated;
+
+      editingRowId = null;
+      renderAllExpenses();
+      renderDashboard();
+      renderBarChart();
+    });
+
+    return row;
+  }
+
+  async function handleDelete(exp){
+    const confirmed = window.confirm(`Delete ${fmtMoney(exp.amount)} at ${exp.store}? This can't be undone.`);
+    if(!confirmed) return;
+
+    clearError();
+    const ok = await deleteExpenseDb(exp.id);
+    if(!ok) return;
+
+    expenses = expenses.filter(e => e.id !== exp.id);
+    if(editingRowId === exp.id) editingRowId = null;
+
+    renderAllExpenses();
+    renderDashboard();
+    renderBarChart();
+  }
+
   function renderFormLockState(){
     const locked = !isCurrentMonthSelected();
     lockNote.style.display = locked ? "flex" : "none";
@@ -742,6 +1032,7 @@
 
     renderDashboard();
     renderBarChart();
+    renderAllExpenses();
   });
 
   newExpenseBtn.addEventListener("click", () => {
@@ -761,6 +1052,7 @@
     renderDashboard();
     renderBarChart();
     renderFormLockState();
+    renderAllExpenses();
   }
 
   init();
