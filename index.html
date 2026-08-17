@@ -135,19 +135,10 @@
   canvas#pieChart{ max-height:230px; }
   canvas#barChart{ max-height:260px; }
   .sync-badge{ text-align:center; font-size:11px; color:var(--ink-soft); padding:6px 0 0 0; }
-
   .debug-box{
-    margin-top:10px;
-    padding:12px 14px;
-    background:#0b0c12;
-    border:1px dashed #33324f;
-    border-radius:10px;
-    font-size:11.5px;
-    line-height:1.7;
-    color:#a8abc0;
-    font-family:ui-monospace,Menlo,Consolas,monospace;
-    word-break:break-all;
-    white-space:pre-wrap;
+    margin-top:10px; padding:12px 14px; background:#0b0c12; border:1px dashed #33324f;
+    border-radius:10px; font-size:11.5px; line-height:1.7; color:#a8abc0;
+    font-family:ui-monospace,Menlo,Consolas,monospace; word-break:break-all; white-space:pre-wrap;
   }
   .debug-box b{ color:#8b7cff; }
 </style>
@@ -273,10 +264,10 @@
 (function(){
   "use strict";
 
-  /* ================= SUPABASE CONFIG — PASTE YOUR VALUES HERE ================= */
-  const SUPABASE_URL = "sb_publishable_t9m0i97BUdiBNJ9SJm8Isg_2Gir8RD3";
+  /* ================= SUPABASE CONFIG ================= */
+  const SUPABASE_URL = "https://drszqxwyyyyppajcqktp.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyc3pxeHd5eXl5cHBhamNxa3RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MjcwNDAsImV4cCI6MjEwMjUwMzA0MH0.HyGNg3cIRy4SYSKnn1L__Gt-ryHqt5TJ4dP_mXQd4QU";
-  /* =============================================================================== */
+  /* ===================================================== */
 
   const CONFIG_OK = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 10;
   const supabase = CONFIG_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -342,10 +333,7 @@
 
   async function fetchAllExpenses(){
     if(!CONFIG_OK){
-      showError(
-        "Database isn't configured.",
-        "SUPABASE_URL or SUPABASE_ANON_KEY still contains placeholder text."
-      );
+      showError("Database isn't configured.", "SUPABASE_URL or SUPABASE_ANON_KEY still contains placeholder text.");
       updateDebugBox({ rowCount: 0, error: "config not set" });
       return [];
     }
