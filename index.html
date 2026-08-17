@@ -109,8 +109,8 @@
     background-size: 5px 5px, 5px 5px; background-repeat:no-repeat;
   }
   .bar-row{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-  .bar-label{ width:78px; flex:0 0 auto; font-size:16.5px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .bar-track{ flex:1; background:#2a2e46; border-radius:8px; height:26px; position:relative; overflow:hidden; }
+  .bar-label{ flex:1 1 auto; min-width:0; font-size:16.5px; font-weight:700; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar-track{ flex:0 0 50%; background:#2a2e46; border-radius:8px; height:26px; position:relative; overflow:hidden; }
   .bar-fill{ height:100%; border-radius:8px; background:linear-gradient(90deg,#a394ff,#5eeed3); display:flex; align-items:center; padding-left:8px; min-width:2px; transition:width .4s ease; box-shadow:0 0 12px rgba(139,124,255,.45); }
   .bar-fill span{ font-size:15.5px; font-weight:800; color:#0e0f16; white-space:nowrap; }
   .bar-pct{ width:40px; flex:0 0 auto; font-size:16.5px; font-weight:800; color:var(--ink); text-align:right; }
@@ -167,7 +167,9 @@
   }
   .all-expenses-link, .manage-categories-link{
     flex:1;
-    display:block;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     text-align:center;
     color:#c2b8ff;
     background:var(--card);
@@ -396,8 +398,8 @@
       </div>
 
       <div class="bottom-links-row">
-        <a class="all-expenses-link" id="allExpensesLink">All expenses →</a>
-        <a class="manage-categories-link" id="manageCategoriesLinkDash">Manage categories →</a>
+        <a class="all-expenses-link" id="allExpensesLink">All expenses</a>
+        <a class="manage-categories-link" id="manageCategoriesLinkDash">Manage categories</a>
       </div>
     </section>
 
