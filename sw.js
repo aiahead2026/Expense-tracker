@@ -27,11 +27,13 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Only handle same-origin GET requests for the app shell.
-  // Everything else (Supabase API calls, CDN scripts) goes straight to the network.
+  // Only handle same-origin GET requests for the app shell (index.html, icons, manifest).
+  // Everything else — Supabase API calls, CDN scripts — is left completely untouched
+  // so the service worker can never be a factor in database read/write reliability,
+  // including intermittent "Load failed" errors seen on mobile Safari.
   const url = new URL(event.request.url);
   if (event.request.method !== "GET" || url.origin !== self.location.origin) {
-    return;
+    return; // not calling respondWith() means the browser handles this request normally
   }
   event.respondWith(
     caches.match(event.request).then((cached) => {

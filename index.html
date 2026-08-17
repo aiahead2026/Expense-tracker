@@ -344,24 +344,50 @@
     });
   }
 
+  // Mobile Safari occasionally throws "TypeError: Load failed" for a fetch
+  // that gets interrupted (network switch, weak signal, tab backgrounding).
+  // Retrying a couple of times with a short delay resolves the vast majority
+  // of these without the person needing to do anything.
+  async function withRetry(fn, attempts = 3, delayMs = 600){
+    let lastErr = null;
+    for(let i = 0; i < attempts; i++){
+      try{
+        return await fn();
+      }catch(err){
+        lastErr = err;
+        if(i < attempts - 1){
+          await new Promise(res => setTimeout(res, delayMs * (i + 1)));
+        }
+      }
+    }
+    throw lastErr;
+  }
+
   async function fetchAllExpenses(){
     if(!CONFIG_OK){
       showError("Database isn't configured.", "SUPABASE_URL or SUPABASE_ANON_KEY still contains placeholder text.");
       return [];
     }
-    const { data, error } = await supabase
-      .from("expenses")
-      .select("id, date, category, amount, store")
-      .order("date", { ascending: true });
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase
+          .from("expenses")
+          .select("id, date, category, amount, store")
+          .order("date", { ascending: true })
+      );
 
-    if(error){
-      showError("Couldn't load expenses from the database.", error.message + (error.hint ? " — " + error.hint : ""));
+      if(error){
+        showError("Couldn't load expenses from the database.", error.message + (error.hint ? " — " + error.hint : ""));
+        return [];
+      }
+      if(!data || data.length === 0){
+        return [];
+      }
+      return data.map(r => ({ ...r, amount: Number(r.amount) }));
+    }catch(err){
+      showError("Couldn't reach the database.", "This can happen briefly on mobile with a weak connection. Pull to refresh or reopen the app to try again. (" + err.message + ")");
       return [];
     }
-    if(!data || data.length === 0){
-      return [];
-    }
-    return data.map(r => ({ ...r, amount: Number(r.amount) }));
   }
 
   async function insertExpense(entry){
@@ -369,15 +395,22 @@
       showError("Database isn't configured.", "Paste your Supabase URL and anon key into the script first.");
       return null;
     }
-    const { data, error } = await supabase
-      .from("expenses")
-      .insert([{ date: entry.date, category: entry.category, amount: entry.amount, store: entry.store }])
-      .select();
-    if(error){
-      showError("Couldn't save that expense.", error.message + (error.hint ? " — " + error.hint : ""));
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase
+          .from("expenses")
+          .insert([{ date: entry.date, category: entry.category, amount: entry.amount, store: entry.store }])
+          .select()
+      );
+      if(error){
+        showError("Couldn't save that expense.", error.message + (error.hint ? " — " + error.hint : ""));
+        return null;
+      }
+      return data && data[0] ? { ...data[0], amount: Number(data[0].amount) } : null;
+    }catch(err){
+      showError("Couldn't save that expense.", "The connection was interrupted after a few tries. Check your signal/WiFi and tap \"Add expense\" again — nothing was saved yet. (" + err.message + ")");
       return null;
     }
-    return data && data[0] ? { ...data[0], amount: Number(data[0].amount) } : null;
   }
 
   const monthSelect = document.getElementById("monthSelect");
