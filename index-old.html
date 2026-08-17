@@ -134,6 +134,13 @@
   .new-expense-btn{ width:100%; background:var(--accent-soft); color:#c9c2ff; border:1px solid #33324f; font-size:15px; font-weight:800; padding:14px; border-radius:14px; cursor:pointer; font-family:inherit; }
   canvas#pieChart{ max-height:230px; }
   canvas#barChart{ max-height:260px; }
+  .sync-badge{ text-align:center; font-size:11px; color:var(--ink-soft); padding:6px 0 0 0; }
+  .debug-box{
+    margin-top:10px; padding:12px 14px; background:#0b0c12; border:1px dashed #33324f;
+    border-radius:10px; font-size:11.5px; line-height:1.7; color:#a8abc0;
+    font-family:ui-monospace,Menlo,Consolas,monospace; word-break:break-all; white-space:pre-wrap;
+  }
+  .debug-box b{ color:#8b7cff; }
 </style>
 </head>
 <body>
@@ -194,6 +201,11 @@
         <div id="barEmpty" class="empty-state" style="display:none;">No expenses in this category for this month.</div>
         <div class="axis-note" id="barAxisNote" style="display:none;">Amount ($) — % of category total shown at right</div>
       </div>
+
+      <div class="sync-badge" id="syncBadge">Synced to shared database</div>
+
+      <!-- TEMPORARY DIAGNOSTIC PANEL — remove once things are confirmed working -->
+      <div class="debug-box" id="debugBox">Loading diagnostics…</div>
     </section>
 
     <!-- SCREEN 2: NEW EXPENSE -->
@@ -300,9 +312,29 @@
     });
   }
 
+  function updateDebugBox(info){
+    const box = document.getElementById("debugBox");
+    if(!box) return;
+    const maskedUrl = CONFIG_OK ? SUPABASE_URL.replace(/^https:\/\//, "") : "(not set)";
+    const keyLen = CONFIG_OK ? SUPABASE_ANON_KEY.length : 0;
+    box.innerHTML =
+      "<b>Diagnostics</b>\n" +
+      "config_ok: " + CONFIG_OK + "\n" +
+      "project_host: " + maskedUrl + "\n" +
+      "anon_key_length: " + keyLen + "\n" +
+      "rows_fetched: " + info.rowCount + "\n" +
+      "fetch_error: " + (info.error || "none") + "\n" +
+      "today: " + now.toISOString().slice(0,10) + "\n" +
+      "selected_month: " + MONTH_NAMES_REF() + " " + selectedYear;
+  }
+  function MONTH_NAMES_REF(){
+    return ["January","February","March","April","May","June","July","August","September","October","November","December"][selectedMonthIndex];
+  }
+
   async function fetchAllExpenses(){
     if(!CONFIG_OK){
       showError("Database isn't configured.", "SUPABASE_URL or SUPABASE_ANON_KEY still contains placeholder text.");
+      updateDebugBox({ rowCount: 0, error: "config not set" });
       return [];
     }
     const { data, error } = await supabase
@@ -312,8 +344,12 @@
 
     if(error){
       showError("Couldn't load expenses from the database.", error.message + (error.hint ? " — " + error.hint : ""));
+      updateDebugBox({ rowCount: 0, error: error.message });
       return [];
     }
+
+    updateDebugBox({ rowCount: data ? data.length : 0, error: null });
+
     if(!data || data.length === 0){
       return [];
     }
@@ -348,6 +384,7 @@
   const legendListEl = document.getElementById("legendList");
   const pieEmptyEl = document.getElementById("pieEmpty");
   const pieWrapEl = document.getElementById("pieWrap");
+  const syncBadge = document.getElementById("syncBadge");
 
   const storeCategorySelect = document.getElementById("storeCategorySelect");
   const barListEl = document.getElementById("barList");
@@ -378,15 +415,11 @@
     }
   }
 
-  // FIX: previously this handler only called renderDashboard(), so the
-  // category breakdown chart kept showing whichever month it last rendered
-  // (usually the current month from page load) even after switching months.
   monthSelect.addEventListener("change", () => {
     selectedMonthIndex = parseInt(monthSelect.value, 10);
     selectedYear = CURRENT_YEAR;
     highlightedCategory = null;
     renderDashboard();
-    renderBarChart();
     renderFormLockState();
   });
 
@@ -681,6 +714,7 @@
 
     pieEmptyEl.style.display = "block";
     pieEmptyEl.textContent = "Loading…";
+    syncBadge.textContent = CONFIG_OK ? "Synced to shared database" : "⚠️ Database not configured";
 
     expenses = await fetchAllExpenses();
 
