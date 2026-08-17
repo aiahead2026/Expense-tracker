@@ -511,7 +511,8 @@
   let categories = [];
 
   function categoryNames(){
-    return categories.length ? categories.map(c => c.name) : FALLBACK_CATEGORIES;
+    const names = categories.length ? categories.map(c => c.name) : FALLBACK_CATEGORIES.slice();
+    return names.sort((a, b) => a.localeCompare(b));
   }
   function colorFor(cat){
     const names = categoryNames();
@@ -1236,7 +1237,8 @@
     }
     categoriesEmpty.style.display = "none";
 
-    categories.forEach(cat => {
+    const sorted = categories.slice().sort((a, b) => a.name.localeCompare(b.name));
+    sorted.forEach(cat => {
       if(editingCategoryId === cat.id){
         categoriesList.appendChild(buildCategoryEditRow(cat));
       } else {
