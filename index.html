@@ -2,8 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>ExpenseTracker</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#171925">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ExpenseTracker">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
 <style>
   :root{
     --bg: #0e0f16;
@@ -27,6 +39,8 @@
     -webkit-font-smoothing:antialiased;
     display:flex;
     justify-content:center;
+    padding-top:env(safe-area-inset-top);
+    padding-bottom:env(safe-area-inset-bottom);
   }
   #app{
     width:100%;
@@ -134,6 +148,33 @@
   .new-expense-btn{ width:100%; background:var(--accent-soft); color:#c9c2ff; border:1px solid #33324f; font-size:15px; font-weight:800; padding:14px; border-radius:14px; cursor:pointer; font-family:inherit; }
   canvas#pieChart{ max-height:230px; }
   canvas#barChart{ max-height:260px; }
+
+  .install-banner{
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:var(--accent-soft);
+    border:1px solid #33324f;
+    color:#c9c2ff;
+    font-size:12.5px;
+    font-weight:600;
+    padding:10px 12px;
+    border-radius:12px;
+    margin-bottom:14px;
+  }
+  .install-banner button{
+    margin-left:auto;
+    flex:0 0 auto;
+    background:linear-gradient(135deg,#7362e0,#5040b8);
+    color:#fff;
+    border:none;
+    font-size:12px;
+    font-weight:800;
+    padding:7px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-family:inherit;
+  }
 </style>
 </head>
 <body>
@@ -171,6 +212,11 @@
   </header>
 
   <main>
+
+    <div class="install-banner" id="installBanner">
+      📲 Install this app on your phone for quick access
+      <button id="installBtn">Install</button>
+    </div>
 
     <!-- SCREEN 1: DASHBOARD -->
     <section class="screen active" id="screen-dashboard">
@@ -252,10 +298,8 @@
 (function(){
   "use strict";
 
-  /* ================= SUPABASE CONFIG ================= */
   const SUPABASE_URL = "https://drszqxwyyyyppajcqktp.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyc3pxeHd5eXl5cHBhamNxa3RwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MjcwNDAsImV4cCI6MjEwMjUwMzA0MH0.HyGNg3cIRy4SYSKnn1L__Gt-ryHqt5TJ4dP_mXQd4QU";
-  /* ===================================================== */
 
   const CONFIG_OK = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 10;
   const supabase = CONFIG_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -378,9 +422,6 @@
     }
   }
 
-  // FIX: previously this handler only called renderDashboard(), so the
-  // category breakdown chart kept showing whichever month it last rendered
-  // (usually the current month from page load) even after switching months.
   monthSelect.addEventListener("change", () => {
     selectedMonthIndex = parseInt(monthSelect.value, 10);
     selectedYear = CURRENT_YEAR;
@@ -690,6 +731,36 @@
   }
 
   init();
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => { /* offline shell just won't be available */ });
+    });
+  }
+
+  let deferredInstallPrompt = null;
+  const installBanner = document.getElementById("installBanner");
+  const installBtn = document.getElementById("installBtn");
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if(installBanner) installBanner.style.display = "flex";
+  });
+
+  if(installBtn){
+    installBtn.addEventListener("click", async () => {
+      if(!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installBanner.style.display = "none";
+    });
+  }
+
+  window.addEventListener("appinstalled", () => {
+    if(installBanner) installBanner.style.display = "none";
+  });
 })();
 </script>
 </body>
