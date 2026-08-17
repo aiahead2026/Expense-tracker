@@ -6,17 +6,17 @@
 <title>ExpenseTracker</title>
 <style>
   :root{
-    --bg: #f5f6fa;
-    --card: #ffffff;
-    --ink: #1b1d29;
-    --ink-soft: #6b7080;
-    --accent: #5b5ff5;
-    --accent-soft: #eceefe;
-    --accent-2: #22c58b;
-    --border: #e7e8f0;
-    --danger: #e0512f;
-    --radius: 16px;
-    --shadow: 0 1px 2px rgba(20,20,43,.04), 0 8px 24px rgba(20,20,43,.06);
+    --bg: #0e0f16;
+    --card: #171925;
+    --ink: #f1f2f8;
+    --ink-soft: #8b8ea3;
+    --accent: #8b7cff;
+    --accent-soft: #23213b;
+    --accent-2: #3fe0c4;
+    --border: #262939;
+    --danger: #ff6b6b;
+    --radius: 18px;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -42,17 +42,20 @@
     position:sticky;
     top:0;
     z-index:20;
-    background:linear-gradient(135deg,#5b5ff5 0%,#7c6ff8 100%);
+    background:linear-gradient(135deg,#1a1c2b 0%,#23253a 100%);
     padding:18px 18px 0 18px;
     color:#fff;
     border-radius:0 0 22px 22px;
     box-shadow:var(--shadow);
+    border-bottom:1px solid var(--border);
   }
   .brand{
     display:flex;
     align-items:center;
+    justify-content:center;
     gap:10px;
     margin-bottom:16px;
+    text-align:center;
   }
   .brand svg{ flex:0 0 auto; }
   .brand-text{
@@ -112,8 +115,9 @@
     transition:background .15s ease, color .15s ease;
   }
   .tab-btn.active{
-    background:#fff;
-    color:var(--accent);
+    background:linear-gradient(135deg,#7362e0,#5040b8);
+    color:#fff;
+    box-shadow:0 4px 14px rgba(80,64,184,.45);
   }
   .tabs-spacer{ height:14px; }
 
@@ -127,6 +131,7 @@
 
   .card{
     background:var(--card);
+    border:1px solid var(--border);
     border-radius:var(--radius);
     padding:16px;
     box-shadow:var(--shadow);
@@ -163,8 +168,8 @@
     cursor:pointer;
     transition:background .15s ease;
   }
-  .legend-row:hover{ background:#f7f7fb; }
-  .legend-row.highlight{ background:var(--accent-soft); }
+  .legend-row:hover{ background:#1e2032; }
+  .legend-row.highlight{ background:var(--accent-soft); box-shadow:inset 0 0 0 1px rgba(139,124,255,.4); }
   .legend-dot{ width:10px; height:10px; border-radius:50%; flex:0 0 auto; }
   .legend-cat{ flex:1; font-size:14px; font-weight:600; }
   .legend-amt{ font-size:14px; font-weight:700; color:var(--ink); }
@@ -184,13 +189,13 @@
     font-size:13.5px;
     font-weight:700;
     color:var(--ink);
-    background:var(--accent-soft);
-    border:1px solid #dfe1fb;
+    background-color:var(--accent-soft);
+    border:1px solid #33324f;
     border-radius:10px;
     padding:7px 28px 7px 10px;
     appearance:none;
     -webkit-appearance:none;
-    background-image:linear-gradient(45deg,transparent 50%, #5b5ff5 50%), linear-gradient(135deg, #5b5ff5 50%, transparent 50%);
+    background-image:linear-gradient(45deg,transparent 50%, #8b7cff 50%), linear-gradient(135deg, #8b7cff 50%, transparent 50%);
     background-position: calc(100% - 14px) 55%, calc(100% - 9px) 55%;
     background-size: 5px 5px, 5px 5px;
     background-repeat:no-repeat;
@@ -213,7 +218,7 @@
   }
   .bar-track{
     flex:1;
-    background:#f0f1f7;
+    background:#1e2032;
     border-radius:8px;
     height:26px;
     position:relative;
@@ -222,12 +227,13 @@
   .bar-fill{
     height:100%;
     border-radius:8px;
-    background:linear-gradient(90deg,#5b5ff5,#7c6ff8);
+    background:linear-gradient(90deg,#8b7cff,#3fe0c4);
     display:flex;
     align-items:center;
     padding-left:8px;
     min-width:2px;
     transition:width .4s ease;
+    box-shadow:0 0 12px rgba(139,124,255,.45);
   }
   .bar-fill span{ font-size:11.5px; font-weight:700; color:#fff; white-space:nowrap; }
   .bar-pct{
@@ -260,27 +266,29 @@
     font-size:15.5px;
     font-weight:600;
     color:var(--ink);
-    background:#f7f8fc;
+    background:#1e2032;
     border:1.5px solid var(--border);
     border-radius:12px;
     padding:13px 14px;
     appearance:none;
     -webkit-appearance:none;
+    color-scheme: dark;
   }
   select.form-input{
-    background-image:linear-gradient(45deg,transparent 50%, #6b7080 50%), linear-gradient(135deg, #6b7080 50%, transparent 50%);
+    background-image:linear-gradient(45deg,transparent 50%, #8b8ea3 50%), linear-gradient(135deg, #8b8ea3 50%, transparent 50%);
     background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
     background-size: 5px 5px, 5px 5px;
     background-repeat:no-repeat;
     padding-right:38px;
   }
+  select.form-input option{ background:#171925; color:#f1f2f8; }
   input:focus, select:focus{
     outline:none;
     border-color:var(--accent);
-    background:#fff;
+    background:#23253a;
   }
   input:disabled, select:disabled{
-    opacity:.55;
+    opacity:.45;
   }
   .amount-wrap{ position:relative; }
   .amount-wrap::before{
@@ -294,7 +302,7 @@
   .submit-btn{
     width:100%;
     border:none;
-    background:var(--accent);
+    background:linear-gradient(135deg,#7362e0,#5040b8);
     color:#fff;
     font-size:16px;
     font-weight:800;
@@ -302,21 +310,22 @@
     border-radius:14px;
     cursor:pointer;
     font-family:inherit;
-    box-shadow:0 8px 18px rgba(91,95,245,.28);
+    box-shadow:0 8px 22px rgba(80,64,184,.4);
   }
   .submit-btn:disabled{
-    background:#c7c9e6;
+    background:#33344a;
     box-shadow:none;
     cursor:not-allowed;
+    color:#7a7d90;
   }
 
   .lock-note{
     display:flex;
     align-items:center;
     gap:10px;
-    background:#fff4ec;
-    border:1px solid #ffe0c7;
-    color:#9a5b1f;
+    background:#2b2115;
+    border:1px solid #4a3620;
+    color:#ffb86b;
     font-size:13.5px;
     font-weight:600;
     padding:12px 14px;
@@ -326,18 +335,18 @@
 
   /* confirmation */
   .success-banner{
-    background:linear-gradient(135deg,#22c58b,#1aa876);
-    color:#fff;
+    background:linear-gradient(135deg,#3fe0c4,#2bb89f);
+    color:#0e0f16;
     border-radius:var(--radius);
     padding:22px 18px;
     text-align:center;
-    box-shadow:0 10px 24px rgba(34,197,139,.3);
+    box-shadow:0 10px 28px rgba(63,224,196,.3);
     margin-bottom:20px;
   }
   .success-banner .check{
     width:46px; height:46px;
     border-radius:50%;
-    background:rgba(255,255,255,.22);
+    background:rgba(14,15,22,.16);
     display:flex; align-items:center; justify-content:center;
     margin:0 auto 12px auto;
   }
@@ -348,14 +357,14 @@
   }
   .success-banner .sub-line{
     font-size:13.5px;
-    color:rgba(255,255,255,.9);
+    color:rgba(14,15,22,.75);
     font-weight:600;
   }
   .new-expense-btn{
     width:100%;
     background:var(--accent-soft);
-    color:var(--accent);
-    border:none;
+    color:#c9c2ff;
+    border:1px solid #33324f;
     font-size:15px;
     font-weight:800;
     padding:14px;
@@ -374,10 +383,16 @@
   <header>
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
-        <rect width="34" height="34" rx="10" fill="rgba(255,255,255,.18)"/>
-        <path d="M9 22.5V16M17 22.5V10M25 22.5V13.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
-        <circle cx="25" cy="13.5" r="2" fill="#fff"/>
-        <path d="M20 8l4.2 4.2M24.2 8L21 11" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <rect width="34" height="34" rx="10" fill="url(#logoGrad1)"/>
+        <rect x="8" y="20" width="4.5" height="7" rx="2" fill="#fff"/>
+        <rect x="14.75" y="14" width="4.5" height="13" rx="2" fill="#fff"/>
+        <rect x="21.5" y="8" width="4.5" height="19" rx="2" fill="#fff" fill-opacity=".92"/>
+        <defs>
+          <linearGradient id="logoGrad1" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#8b7cff"/>
+            <stop offset="1" stop-color="#3fe0c4"/>
+          </linearGradient>
+        </defs>
       </svg>
       <div class="brand-text">
         <strong>ExpenseTracker</strong>
@@ -458,7 +473,7 @@
       <div class="success-banner">
         <div class="check">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <path d="M4 11.5L9 16L18 6" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 11.5L9 16L18 6" stroke="#0e0f16" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="amount-line" id="confirmLine">$0.00 at Store has been successfully added</div>
@@ -483,9 +498,9 @@
   ];
 
   const CATEGORY_COLORS = [
-    "#5b5ff5","#f5866b","#22c58b","#f5b942","#7c6ff8","#e0512f",
-    "#3fb6d3","#c96fd6","#8bc542","#f57ba0","#4a9fe0","#d69e2e",
-    "#63c6a0","#e07a5f","#9a8cf0","#5fa8a0","#e35b7a","#7ea44a","#c78bd0"
+    "#8b7cff","#ff6b9d","#3fe0c4","#ffc857","#6ae3ff","#ff6b6b",
+    "#b6f24d","#c792ff","#4dd4ac","#ff9a5a","#5ec8ff","#f2d94d",
+    "#ff7fb0","#7ee6d8","#a78bfa","#4dd0e1","#ff8fa3","#c9e264","#d9a8ff"
   ];
   function colorFor(cat){
     const i = CATEGORIES.indexOf(cat);
@@ -674,7 +689,7 @@
         datasets: [{
           data: data,
           backgroundColor: colors,
-          borderColor: "#fff",
+          borderColor: "#171925",
           borderWidth: 2
         }]
       },
@@ -684,6 +699,12 @@
         plugins: {
           legend: { display: false },
           tooltip: {
+            backgroundColor: "#23253a",
+            titleColor: "#f1f2f8",
+            bodyColor: "#f1f2f8",
+            borderColor: "#33324f",
+            borderWidth: 1,
+            padding: 10,
             callbacks: {
               label: (ctx) => {
                 const val = ctx.parsed;
@@ -735,7 +756,7 @@
     const base = cats.map(c => colorFor(c));
     if(!highlightedCategory){
       pieChart.data.datasets[0].backgroundColor = base;
-      pieChart.data.datasets[0].borderColor = "#fff";
+      pieChart.data.datasets[0].borderColor = "#171925";
       pieChart.update();
       return;
     }
@@ -745,10 +766,11 @@
   }
 
   function hexToFaded(hex){
-    // lighten a hex color to indicate "not selected"
+    // darken/desaturate a hex color toward the dark background to indicate "not selected"
     const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-    const mix = (c) => Math.round(c + (255 - c) * 0.75);
-    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+    const bgR = 23, bgG = 25, bgB = 37; // matches --card
+    const mix = (c, bg) => Math.round(c * 0.35 + bg * 0.65);
+    return `rgb(${mix(r,bgR)},${mix(g,bgG)},${mix(b,bgB)})`;
   }
 
   /* ---------------- Render: Horizontal bar (store/business) ---------------- */
@@ -786,7 +808,7 @@
       row.innerHTML = `
         <span class="bar-label" title="${store}">${store}</span>
         <span class="bar-track">
-          <span class="bar-fill" style="width:${widthPct}%; background:${colorFor(selectedCat)}, ${colorFor(selectedCat)}"><span>${fmtMoney(val)}</span></span>
+          <span class="bar-fill" style="width:${widthPct}%; background:linear-gradient(90deg, ${colorFor(selectedCat)}, #3fe0c4); box-shadow:0 0 12px ${colorFor(selectedCat)}66;"><span>${fmtMoney(val)}</span></span>
         </span>
         <span class="bar-pct">${pct}%</span>
       `;
@@ -844,33 +866,43 @@
     switchTab("new-expense");
   });
 
-  /* ---------------- Sample data (for previewing charts) ---------------- */
+  /* ---------------- Sample data (from user's Google Sheet) ---------------- */
   function seedSampleDataIfEmpty(){
     if(expenses.length > 0) return;
-    const y = CURRENT_YEAR, m = CURRENT_MONTH_INDEX;
-    const pad = (n) => String(n).padStart(2,"0");
-    const d = (day) => `${y}-${pad(m+1)}-${pad(day)}`;
     const sample = [
-      { date:d(2),  category:"Groceries",      amount:86.42,  store:"Trader Joe's" },
-      { date:d(9),  category:"Groceries",      amount:41.10,  store:"Target" },
-      { date:d(16), category:"Groceries",      amount:112.75, store:"Walmart" },
-      { date:d(23), category:"Groceries",      amount:58.30,  store:"Costco" },
-      { date:d(4),  category:"Eat out",        amount:24.50,  store:"Chipotle" },
-      { date:d(12), category:"Eat out",        amount:63.00,  store:"Sushi Kai" },
-      { date:d(20), category:"Eat out",        amount:18.75,  store:"Starbucks" },
-      { date:d(1),  category:"Rent",           amount:1450.00,store:"Parkview Apartments" },
-      { date:d(6),  category:"Transportation", amount:35.00,  store:"Metro Transit" },
-      { date:d(14), category:"Fuel",           amount:52.20,  store:"Shell" },
-      { date:d(18), category:"Electricity",    amount:74.85,  store:"City Power Co" },
-      { date:d(10), category:"Phone",          amount:65.00,  store:"Verizon" },
-      { date:d(7),  category:"Entertainment",  amount:15.99,  store:"Netflix" },
-      { date:d(21), category:"Entertainment",  amount:32.00,  store:"AMC Theatres" },
-      { date:d(5),  category:"Gym",            amount:45.00,  store:"Planet Fitness" },
-      { date:d(13), category:"Clothing",       amount:79.99,  store:"Old Navy" },
-      { date:d(17), category:"Healthcare",     amount:30.00,  store:"CVS Pharmacy" },
-      { date:d(11), category:"House stuff",    amount:48.60,  store:"Home Depot" },
-      { date:d(3),  category:"Car insurance",  amount:120.00, store:"Geico" },
-      { date:d(15), category:"Misc",           amount:22.15,  store:"Amazon" }
+      { date:"2026-07-28", category:"Groceries",     amount:400.00,  store:"Cosco" },
+      { date:"2026-07-28", category:"Fuel",           amount:30.00,   store:"Mazda" },
+      { date:"2026-07-29", category:"Groceries",      amount:57.43,   store:"Harris Teeter" },
+      { date:"2026-07-29", category:"Groceries",      amount:44.44,   store:"Hannaford" },
+      { date:"2026-07-29", category:"Fuel",            amount:58.05,   store:"Rental" },
+      { date:"2026-07-30", category:"Gas",             amount:24.40,   store:"Enbridge" },
+      { date:"2026-07-31", category:"Healthcare",      amount:20.00,   store:"Copays" },
+      { date:"2026-08-01", category:"Rent",            amount:3625.00, store:"Hunters Point" },
+      { date:"2026-08-01", category:"Mortgage",        amount:2100.00, store:"Everett" },
+      { date:"2026-08-01", category:"Gym",             amount:89.00,   store:"YMCA" },
+      { date:"2026-08-01", category:"Groceries",       amount:119.43,  store:"Trader's Joe" },
+      { date:"2026-08-01", category:"Car insurance",   amount:130.00,  store:"Progressive auto" },
+      { date:"2026-08-03", category:"Healthcare",      amount:94.00,   store:"Stelo GCM" },
+      { date:"2026-08-03", category:"Healthcare",      amount:250.00,  store:"Serene Smile" },
+      { date:"2026-08-04", category:"House stuff",     amount:241.73,  store:"Target" },
+      { date:"2026-08-04", category:"Union-water",     amount:46.88,   store:"Water bill" },
+      { date:"2026-08-04", category:"Misc",            amount:150.00,  store:"Turtle" },
+      { date:"2026-08-04", category:"Misc",            amount:27.76,   store:"Amazon" },
+      { date:"2026-08-05", category:"Misc",            amount:593.78,  store:"Honda Maintenance" },
+      { date:"2026-08-07", category:"Groceries",       amount:12.86,   store:"Trader Joe's" },
+      { date:"2026-08-07", category:"Groceries",       amount:6.08,    store:"Olive Tree" },
+      { date:"2026-08-07", category:"Groceries",       amount:3.79,    store:"Harris Teeter" },
+      { date:"2026-08-07", category:"Groceries",       amount:206.05,  store:"Trader's Joe" },
+      { date:"2026-08-07", category:"Misc",            amount:73.00,   store:"WAKE COUNTY BOARD" },
+      { date:"2026-08-07", category:"Misc",            amount:29.95,   store:"Arag Legal" },
+      { date:"2026-08-07", category:"Misc",            amount:25.00,   store:"Drs W Border" },
+      { date:"2026-08-07", category:"Misc",            amount:25.00,   store:"Noor Kids" },
+      { date:"2026-08-07", category:"Groceries",       amount:57.50,   store:"Arab Delight" },
+      { date:"2026-08-09", category:"Fuel",            amount:33.10,   store:"Mazda" },
+      { date:"2026-08-09", category:"Misc",            amount:425.00,  store:"Soccer Registration" },
+      { date:"2026-08-09", category:"Fuel",            amount:12.21,   store:"Kawazaki" },
+      { date:"2026-08-11", category:"Misc",            amount:33.21,   store:"Amazon" },
+      { date:"2026-08-11", category:"Groceries",       amount:162.87,  store:"Cosco" }
     ];
     sample.forEach((e, i) => expenses.push({ id: Date.now() + i, ...e }));
     saveExpenses();
@@ -892,3 +924,4 @@
 </script>
 </body>
 </html>
+<!-- redeploy trigger -->
