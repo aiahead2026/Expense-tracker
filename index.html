@@ -160,8 +160,7 @@
     font-size:12px; font-weight:800; padding:7px 12px; border-radius:8px; cursor:pointer; font-family:inherit;
   }
 
-  /* All-expenses link + page */
-  .all-expenses-link{
+  .all-expenses-link, .manage-categories-link{
     display:block;
     text-align:center;
     color:#a89cff;
@@ -171,7 +170,18 @@
     padding:10px 0 4px 0;
     cursor:pointer;
   }
-  .all-expenses-link:active{ opacity:.7; }
+  .all-expenses-link:active, .manage-categories-link:active{ opacity:.7; }
+
+  .field-hint{
+    display:block;
+    text-align:right;
+    font-size:12px;
+    font-weight:700;
+    color:#a89cff;
+    text-decoration:none;
+    margin:-10px 0 16px 0;
+    cursor:pointer;
+  }
 
   .page-header{
     display:flex;
@@ -247,6 +257,68 @@
   .save-btn{ background:linear-gradient(135deg,#7362e0,#5040b8); color:#fff; }
   .cancel-btn{ background:#1e2032; color:var(--ink-soft); border:1px solid var(--border) !important; }
   .save-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .category-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .category-row:last-child{ border-bottom:none; }
+  .category-name{
+    flex:1;
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .category-count{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-right:4px;
+  }
+  .category-edit-input{
+    flex:1;
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--ink);
+    background:#1e2032;
+    border:1.5px solid var(--accent);
+    border-radius:8px;
+    padding:8px 10px;
+  }
+  .add-category-row{
+    display:flex;
+    gap:8px;
+    padding:14px 4px 4px 4px;
+  }
+  .add-category-row input{
+    flex:1;
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ink);
+    background:#1e2032;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:11px 12px;
+  }
+  .add-category-row input:focus{ outline:none; border-color:var(--accent); background:#23253a; }
+  .add-category-btn{
+    flex:0 0 auto;
+    background:linear-gradient(135deg,#7362e0,#5040b8);
+    color:#fff;
+    border:none;
+    font-size:13.5px;
+    font-weight:800;
+    padding:0 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .add-category-btn:disabled{ opacity:.5; cursor:not-allowed; }
 </style>
 </head>
 <body>
@@ -312,6 +384,7 @@
         <div id="barEmpty" class="empty-state" style="display:none;">No expenses in this category for this month.</div>
         <div class="axis-note" id="barAxisNote" style="display:none;">Amount ($) — % of category total shown at right</div>
         <a class="all-expenses-link" id="allExpensesLink">All expenses →</a>
+        <a class="manage-categories-link" id="manageCategoriesLinkDash">Manage categories →</a>
       </div>
     </section>
 
@@ -333,6 +406,7 @@
               <option value="" selected disabled>Select&hellip;</option>
             </select>
           </div>
+          <a class="field-hint" id="manageCategoriesLinkForm">Manage categories →</a>
           <div class="field">
             <label for="amountField">Amount</label>
             <div class="amount-wrap">
@@ -375,6 +449,23 @@
       </div>
     </section>
 
+    <!-- SCREEN 5: MANAGE CATEGORIES -->
+    <section class="screen" id="screen-manage-categories">
+      <div class="page-header">
+        <h1>Manage categories</h1>
+        <button class="icon-btn" id="closeManageCategoriesBtn" aria-label="Close">✕</button>
+      </div>
+      <div class="error-note" id="categoriesErrorNote"></div>
+      <div class="card" style="padding:8px 12px;">
+        <div id="categoriesList"></div>
+        <div id="categoriesEmpty" class="empty-state" style="display:none;">No categories yet — add one below.</div>
+        <div class="add-category-row">
+          <input type="text" id="newCategoryInput" placeholder="New category name">
+          <button class="add-category-btn" id="addCategoryBtn">Add</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -390,7 +481,7 @@
   const CONFIG_OK = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 10;
   const supabase = CONFIG_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-  const CATEGORIES = [
+  const FALLBACK_CATEGORIES = [
     "Groceries","Clothing","Healthcare","Transportation","Eat out","House stuff",
     "Fuel","Electricity","City services","Gas","Rent","Mortgage","Union-water",
     "Phone","Misc","Entertainment","Gym","Car insurance","Master insurance"
@@ -401,8 +492,15 @@
     "#b6f24d","#c792ff","#4dd4ac","#ff9a5a","#5ec8ff","#f2d94d",
     "#ff7fb0","#7ee6d8","#a78bfa","#4dd0e1","#ff8fa3","#c9e264","#d9a8ff"
   ];
+
+  let categories = [];
+
+  function categoryNames(){
+    return categories.length ? categories.map(c => c.name) : FALLBACK_CATEGORIES;
+  }
   function colorFor(cat){
-    const i = CATEGORIES.indexOf(cat);
+    const names = categoryNames();
+    const i = names.indexOf(cat);
     return CATEGORY_COLORS[i >= 0 ? i % CATEGORY_COLORS.length : 0];
   }
 
@@ -416,18 +514,29 @@
   let pieChart = null;
   let highlightedCategory = null;
   let editingRowId = null;
+  let editingCategoryId = null;
   let previousScreen = "dashboard";
 
   function showError(msg, detail){
     const full = "⚠️ " + msg + (detail ? "\n" + detail : "");
-    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote"), document.getElementById("allExpensesErrorNote")].forEach(el => {
+    [
+      document.getElementById("dashboardErrorNote"),
+      document.getElementById("errorNote"),
+      document.getElementById("allExpensesErrorNote"),
+      document.getElementById("categoriesErrorNote")
+    ].forEach(el => {
       if(!el) return;
       el.style.display = "flex";
       el.textContent = full;
     });
   }
   function clearError(){
-    [document.getElementById("dashboardErrorNote"), document.getElementById("errorNote"), document.getElementById("allExpensesErrorNote")].forEach(el => {
+    [
+      document.getElementById("dashboardErrorNote"),
+      document.getElementById("errorNote"),
+      document.getElementById("allExpensesErrorNote"),
+      document.getElementById("categoriesErrorNote")
+    ].forEach(el => {
       if(el){ el.style.display = "none"; el.textContent = ""; }
     });
   }
@@ -531,14 +640,102 @@
     }
   }
 
+  async function fetchCategories(){
+    if(!CONFIG_OK) return [];
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase.from("categories").select("id, name, sort_order").order("sort_order", { ascending: true })
+      );
+      if(error){
+        showError("Couldn't load categories.", error.message + " — has the categories table been created yet?");
+        return [];
+      }
+      return data || [];
+    }catch(err){
+      showError("Couldn't reach the database to load categories.", err.message);
+      return [];
+    }
+  }
+
+  async function insertCategory(name){
+    if(!CONFIG_OK) return null;
+    const maxOrder = categories.reduce((m, c) => Math.max(m, c.sort_order || 0), 0);
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase.from("categories").insert([{ name, sort_order: maxOrder + 1 }]).select()
+      );
+      if(error){
+        if(error.code === "23505"){
+          showError("That category already exists.", "Pick a different name.");
+        } else {
+          showError("Couldn't add that category.", error.message);
+        }
+        return null;
+      }
+      return data && data[0] ? data[0] : null;
+    }catch(err){
+      showError("Couldn't add that category.", "Check your connection and try again. (" + err.message + ")");
+      return null;
+    }
+  }
+
+  async function renameCategory(id, oldName, newName){
+    if(!CONFIG_OK) return null;
+    try{
+      const { data, error } = await withRetry(() =>
+        supabase.from("categories").update({ name: newName }).eq("id", id).select()
+      );
+      if(error){
+        if(error.code === "23505"){
+          showError("A category with that name already exists.", "Pick a different name.");
+        } else {
+          showError("Couldn't rename that category.", error.message);
+        }
+        return null;
+      }
+      if(oldName !== newName){
+        const { error: cascadeErr } = await withRetry(() =>
+          supabase.from("expenses").update({ category: newName }).eq("category", oldName)
+        );
+        if(cascadeErr){
+          showError("Renamed the category, but couldn't update past expenses that used it.", cascadeErr.message);
+        }
+      }
+      return data && data[0] ? data[0] : null;
+    }catch(err){
+      showError("Couldn't rename that category.", "Check your connection and try again. (" + err.message + ")");
+      return null;
+    }
+  }
+
+  async function deleteCategory(id){
+    if(!CONFIG_OK) return false;
+    try{
+      const { error } = await withRetry(() =>
+        supabase.from("categories").delete().eq("id", id)
+      );
+      if(error){
+        showError("Couldn't delete that category.", error.message);
+        return false;
+      }
+      return true;
+    }catch(err){
+      showError("Couldn't delete that category.", "Check your connection and try again. (" + err.message + ")");
+      return false;
+    }
+  }
+
   const monthSelect = document.getElementById("monthSelect");
   const tabBtns = document.querySelectorAll(".tab-btn");
   const screens = {
     dashboard: document.getElementById("screen-dashboard"),
     "new-expense": document.getElementById("screen-new-expense"),
     confirmation: document.getElementById("screen-confirmation"),
-    "all-expenses": document.getElementById("screen-all-expenses")
+    "all-expenses": document.getElementById("screen-all-expenses"),
+    "manage-categories": document.getElementById("screen-manage-categories")
   };
+  const OVERLAY_SCREENS = ["confirmation", "all-expenses", "manage-categories"];
+
   const summaryMonthLabel = document.getElementById("summaryMonthLabel");
   const monthlyTotalEl = document.getElementById("monthlyTotal");
   const legendListEl = document.getElementById("legendList");
@@ -567,6 +764,14 @@
   const allExpensesList = document.getElementById("allExpensesList");
   const allExpensesEmpty = document.getElementById("allExpensesEmpty");
 
+  const manageCategoriesLinkDash = document.getElementById("manageCategoriesLinkDash");
+  const manageCategoriesLinkForm = document.getElementById("manageCategoriesLinkForm");
+  const closeManageCategoriesBtn = document.getElementById("closeManageCategoriesBtn");
+  const categoriesList = document.getElementById("categoriesList");
+  const categoriesEmpty = document.getElementById("categoriesEmpty");
+  const newCategoryInput = document.getElementById("newCategoryInput");
+  const addCategoryBtn = document.getElementById("addCategoryBtn");
+
   const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
   function buildMonthOptions(){
@@ -592,19 +797,33 @@
   });
 
   function buildCategoryDropdowns(){
-    CATEGORIES.forEach(cat => {
-      const opt1 = document.createElement("option");
-      opt1.value = cat;
-      opt1.textContent = cat;
-      categoryField.appendChild(opt1);
+    const names = categoryNames();
+    const prevCategoryValue = categoryField.value;
+    const prevStoreCatValue = storeCategorySelect.value;
+
+    categoryField.innerHTML = '<option value="" selected disabled>Select&hellip;</option>';
+    names.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      categoryField.appendChild(opt);
     });
-    CATEGORIES.forEach(cat => {
-      const opt2 = document.createElement("option");
-      opt2.value = cat;
-      opt2.textContent = cat;
-      if(cat === "Groceries") opt2.selected = true;
-      storeCategorySelect.appendChild(opt2);
+    if(names.includes(prevCategoryValue)) categoryField.value = prevCategoryValue;
+
+    storeCategorySelect.innerHTML = "";
+    names.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      storeCategorySelect.appendChild(opt);
     });
+    if(names.includes(prevStoreCatValue)){
+      storeCategorySelect.value = prevStoreCatValue;
+    } else if(names.includes("Groceries")){
+      storeCategorySelect.value = "Groceries";
+    } else if(names.length){
+      storeCategorySelect.value = names[0];
+    }
   }
   storeCategorySelect.addEventListener("change", renderBarChart);
 
@@ -618,11 +837,10 @@
   function switchTab(target){
     tabBtns.forEach(b => b.classList.toggle("active", b.getAttribute("data-tab") === target));
     Object.keys(screens).forEach(key => {
-      if(key === "confirmation" || key === "all-expenses") return;
+      if(OVERLAY_SCREENS.includes(key)) return;
       screens[key].classList.toggle("active", key === target);
     });
-    screens.confirmation.classList.remove("active");
-    screens["all-expenses"].classList.remove("active");
+    OVERLAY_SCREENS.forEach(key => screens[key].classList.remove("active"));
     if(target === "new-expense"){
       renderFormLockState();
     }
@@ -631,23 +849,33 @@
     }
   }
 
-  function openAllExpenses(){
+  function openOverlay(name){
     editingRowId = null;
+    editingCategoryId = null;
     Object.keys(screens).forEach(key => screens[key].classList.remove("active"));
-    screens["all-expenses"].classList.add("active");
+    screens[name].classList.add("active");
     tabBtns.forEach(b => b.classList.remove("active"));
-    renderAllExpenses();
   }
 
-  function closeAllExpenses(){
+  function closeOverlay(){
     editingRowId = null;
+    editingCategoryId = null;
     Object.keys(screens).forEach(key => screens[key].classList.remove("active"));
     screens[previousScreen].classList.add("active");
     tabBtns.forEach(b => b.classList.toggle("active", b.getAttribute("data-tab") === previousScreen));
   }
 
-  allExpensesLink.addEventListener("click", openAllExpenses);
-  closeAllExpensesBtn.addEventListener("click", closeAllExpenses);
+  allExpensesLink.addEventListener("click", () => { openOverlay("all-expenses"); renderAllExpenses(); });
+  closeAllExpensesBtn.addEventListener("click", closeOverlay);
+
+  manageCategoriesLinkDash.addEventListener("click", () => { openOverlay("manage-categories"); renderCategoriesPage(); });
+  manageCategoriesLinkForm.addEventListener("click", (e) => { e.preventDefault(); openOverlay("manage-categories"); renderCategoriesPage(); });
+  closeManageCategoriesBtn.addEventListener("click", async () => {
+    buildCategoryDropdowns();
+    renderDashboard();
+    renderBarChart();
+    closeOverlay();
+  });
 
   function fmtMoney(n){
     return "$" + n.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -846,7 +1074,6 @@
     });
   }
 
-  /* ---------------- All Expenses page ---------------- */
   function renderAllExpenses(){
     const monthLabel = MONTH_NAMES[selectedMonthIndex] + " " + selectedYear;
     allExpensesTitle.textContent = monthLabel;
@@ -887,7 +1114,7 @@
       editingRowId = exp.id;
       renderAllExpenses();
     });
-    row.querySelector(".delete-btn").addEventListener("click", () => handleDelete(exp));
+    row.querySelector(".delete-btn").addEventListener("click", () => handleDeleteExpense(exp));
     return row;
   }
 
@@ -895,7 +1122,7 @@
     const row = document.createElement("div");
     row.className = "edit-row";
 
-    const catOptions = CATEGORIES.map(c =>
+    const catOptions = categoryNames().map(c =>
       `<option value="${c}" ${c === exp.category ? "selected" : ""}>${c}</option>`
     ).join("");
 
@@ -967,7 +1194,7 @@
     return row;
   }
 
-  async function handleDelete(exp){
+  async function handleDeleteExpense(exp){
     const confirmed = window.confirm(`Delete ${fmtMoney(exp.amount)} at ${exp.store}? This can't be undone.`);
     if(!confirmed) return;
 
@@ -982,6 +1209,150 @@
     renderDashboard();
     renderBarChart();
   }
+
+  function renderCategoriesPage(){
+    categoriesList.innerHTML = "";
+    if(categories.length === 0){
+      categoriesEmpty.style.display = "block";
+      return;
+    }
+    categoriesEmpty.style.display = "none";
+
+    categories.forEach(cat => {
+      if(editingCategoryId === cat.id){
+        categoriesList.appendChild(buildCategoryEditRow(cat));
+      } else {
+        categoriesList.appendChild(buildCategoryDisplayRow(cat));
+      }
+    });
+  }
+
+  function usageCount(categoryName){
+    return expenses.filter(e => e.category === categoryName).length;
+  }
+
+  function buildCategoryDisplayRow(cat){
+    const row = document.createElement("div");
+    row.className = "category-row";
+    const count = usageCount(cat.name);
+    row.innerHTML = `
+      <span class="category-name">${cat.name}</span>
+      <span class="category-count">${count} expense${count === 1 ? "" : "s"}</span>
+      <div class="row-actions">
+        <button class="edit-btn" aria-label="Rename">✎</button>
+        <button class="delete-btn" aria-label="Delete">🗑</button>
+      </div>
+    `;
+    row.querySelector(".edit-btn").addEventListener("click", () => {
+      editingCategoryId = cat.id;
+      renderCategoriesPage();
+    });
+    row.querySelector(".delete-btn").addEventListener("click", () => handleDeleteCategory(cat));
+    return row;
+  }
+
+  function buildCategoryEditRow(cat){
+    const row = document.createElement("div");
+    row.className = "category-row";
+    row.innerHTML = `
+      <input type="text" class="category-edit-input" value="${cat.name.replace(/"/g, "&quot;")}">
+      <div class="row-actions">
+        <button class="cancel-rename-btn" aria-label="Cancel">✕</button>
+        <button class="save-rename-btn" aria-label="Save">✓</button>
+      </div>
+    `;
+    const input = row.querySelector(".category-edit-input");
+
+    row.querySelector(".cancel-rename-btn").addEventListener("click", () => {
+      editingCategoryId = null;
+      clearError();
+      renderCategoriesPage();
+    });
+
+    row.querySelector(".save-rename-btn").addEventListener("click", async () => {
+      const newName = input.value.trim();
+      if(!newName){
+        showError("Category name can't be empty.");
+        return;
+      }
+      if(newName === cat.name){
+        editingCategoryId = null;
+        renderCategoriesPage();
+        return;
+      }
+      clearError();
+      const updated = await renameCategory(cat.id, cat.name, newName);
+      if(!updated) return;
+
+      const idx = categories.findIndex(c => c.id === cat.id);
+      if(idx !== -1) categories[idx] = updated;
+      expenses.forEach(e => { if(e.category === cat.name) e.category = newName; });
+
+      editingCategoryId = null;
+      renderCategoriesPage();
+      buildCategoryDropdowns();
+      renderDashboard();
+      renderBarChart();
+    });
+
+    return row;
+  }
+
+  async function handleDeleteCategory(cat){
+    const count = usageCount(cat.name);
+    const message = count > 0
+      ? `Delete "${cat.name}"? ${count} existing expense${count === 1 ? "" : "s"} will keep this label but it won't be selectable for new expenses.`
+      : `Delete "${cat.name}"? This can't be undone.`;
+    const confirmed = window.confirm(message);
+    if(!confirmed) return;
+
+    clearError();
+    const ok = await deleteCategory(cat.id);
+    if(!ok) return;
+
+    categories = categories.filter(c => c.id !== cat.id);
+    if(editingCategoryId === cat.id) editingCategoryId = null;
+
+    renderCategoriesPage();
+    buildCategoryDropdowns();
+    renderDashboard();
+    renderBarChart();
+  }
+
+  async function handleAddCategory(){
+    const name = newCategoryInput.value.trim();
+    if(!name){
+      showError("Enter a category name first.");
+      return;
+    }
+    if(categoryNames().some(n => n.toLowerCase() === name.toLowerCase())){
+      showError("That category already exists.");
+      return;
+    }
+    clearError();
+    addCategoryBtn.disabled = true;
+    addCategoryBtn.textContent = "Adding…";
+
+    const created = await insertCategory(name);
+
+    addCategoryBtn.disabled = false;
+    addCategoryBtn.textContent = "Add";
+
+    if(!created) return;
+
+    categories.push(created);
+    newCategoryInput.value = "";
+    renderCategoriesPage();
+    buildCategoryDropdowns();
+  }
+
+  addCategoryBtn.addEventListener("click", handleAddCategory);
+  newCategoryInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter"){
+      e.preventDefault();
+      handleAddCategory();
+    }
+  });
 
   function renderFormLockState(){
     const locked = !isCurrentMonthSelected();
@@ -1041,11 +1412,13 @@
 
   async function init(){
     buildMonthOptions();
-    buildCategoryDropdowns();
     dateField.value = new Date().toISOString().slice(0,10);
 
     pieEmptyEl.style.display = "block";
     pieEmptyEl.textContent = "Loading…";
+
+    categories = await fetchCategories();
+    buildCategoryDropdowns();
 
     expenses = await fetchAllExpenses();
 
