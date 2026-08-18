@@ -480,7 +480,7 @@
         <div id="allExpensesList"></div>
         <div id="allExpensesEmpty" class="empty-state" style="display:none;">No expenses for this month yet.</div>
       </div>
-       <button class="secondary-btn" id="closeAllExpensesBtn" aria-label="Close">Close</button>
+       <button class="secondary-btn" id="closeAllExpensesBottomBtn" aria-label="Close">Close</button>
     </section>
 
     <!-- SCREEN 5: MANAGE CATEGORIES -->
@@ -902,6 +902,8 @@
 
   allExpensesLink.addEventListener("click", () => { openOverlay("all-expenses"); renderAllExpenses(); });
   closeAllExpensesBtn.addEventListener("click", closeOverlay);
+  closeAllExpensesBtn.addEventListener("click", closeOverlay);
+  document.getElementById("closeAllExpensesBottomBtn").addEventListener("click", closeOverlay);
 
   manageCategoriesLinkDash.addEventListener("click", () => { openOverlay("manage-categories"); renderCategoriesPage(); });
   manageCategoriesLinkForm.addEventListener("click", (e) => { e.preventDefault(); openOverlay("manage-categories"); renderCategoriesPage(); });
