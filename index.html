@@ -1037,10 +1037,7 @@
     // ==================== CONFIG ====================
     const SUPABASE_URL = 'https://drszqxwyyyyppajcqktp.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyc3pxeHd5eXlwcGFqY3FrdHAiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwNjI3OTk3OCwiZXhwIjoxODYzOTQ3OTc4fQ.n-Hmp_c7wQmR3S6lBh_q3hXR00Yl6O9hTMW4Ss85Z3o';
-    const APP_PASSWORD = 'ramoben1'; // Change this to your desired password
-
-    // ==================== SUPABASE ====================
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const APP_PASSWORD = 'demo123'; // Change this to your desired password
 
     // ==================== STATE ====================
     let currentMonth = new Date();
@@ -1048,6 +1045,9 @@
     let pieChart = null;
     let previousScreen = 'dashboard';
     let isListening = false;
+    
+    // ==================== SUPABASE ====================
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // ==================== AUTH ====================
     const loginContainer = document.getElementById('loginContainer');
