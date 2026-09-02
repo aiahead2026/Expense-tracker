@@ -26,866 +26,121 @@
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    /* LOGIN SCREEN */
-    .login-container {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-      z-index: 1000;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .login-container.active {
-      display: flex;
-    }
-
-    .login-box {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 40px 30px;
-      width: 100%;
-      max-width: 320px;
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-
-    .login-logo {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border-radius: 12px;
-      margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      font-size: 24px;
-    }
-
-    .login-title {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text-primary);
-    }
-
-    .login-subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 30px;
-    }
-
-    .login-input {
-      width: 100%;
-      padding: 12px 16px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 16px;
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
-    }
-
-    .login-input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .login-input::placeholder {
-      color: var(--text-secondary);
-    }
-
-    .login-button {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .login-button:active {
-      transform: scale(0.98);
-    }
-
-    .login-error {
-      color: var(--danger);
-      font-size: 14px;
-      margin-bottom: 16px;
-      display: none;
-    }
-
-    .login-error.show {
-      display: block;
-    }
-
-    /* APP CONTAINER */
-    .app-container {
-      display: none;
-    }
-
-    .app-container.active {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: var(--bg-primary);
-    }
-
-    /* HEADER */
-    .header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .logo-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .logo-text {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .logout-btn {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-    }
-
-    .logout-btn:active {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-
-    .header-controls {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .month-selector {
-      flex: 1;
-      padding: 8px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .month-selector:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    /* TABS */
-    .tabs {
-      display: flex;
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
-      padding: 0 20px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 14px 0;
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .tab-btn.active {
-      color: var(--text-primary);
-      border-bottom-color: var(--primary);
-    }
-
-    /* CONTENT */
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* CARDS */
-    .card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--text-primary);
-    }
-
-    /* DASHBOARD */
-    .monthly-summary {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .total-amount {
-      font-size: 42px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 16px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .pie-chart-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 0 auto 20px;
-    }
-
-    .chart-canvas {
-      max-width: 100%;
-      height: auto;
-    }
-
-    .category-bars {
-      margin-top: 20px;
-    }
-
-    .category-selector {
-      margin-bottom: 16px;
-    }
-
-    .category-selector select {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .store-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 14px;
-      gap: 10px;
-    }
-
-    .store-label {
-      min-width: 80px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .bar-track {
-      flex: 1;
-      height: 24px;
-      background: var(--bg-tertiary);
-      border-radius: 6px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border-radius: 6px;
-      max-width: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 8px;
-    }
-
-    .bar-value {
-      font-size: 11px;
-      color: white;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .bar-percent {
-      min-width: 45px;
-      text-align: right;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .action-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .btn-pill {
-      padding: 12px 16px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--text-primary);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-
-    .btn-pill:active {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    /* FORM */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .form-input,
-    .form-select {
-      width: 100%;
-      padding: 12px 16px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-primary);
-      font-size: 16px;
-      transition: border-color 0.2s;
-      font-family: inherit;
-    }
-
-    .form-input:focus,
-    .form-select:focus {
-      outline: none;
-      border-color: var(--primary);
-      background: var(--bg-tertiary);
-    }
-
-    .form-input::placeholder {
-      color: var(--text-secondary);
-    }
-
-    .form-select option {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-    }
-
-    .warning-banner {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--warning);
-      border-radius: var(--radius);
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      display: none;
-    }
-
-    .warning-banner.show {
-      display: block;
-    }
-
-    .voice-input-group {
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-    }
-
-    .voice-input-group .form-input {
-      flex: 1;
-      margin-bottom: 0;
-    }
-
-    .voice-btn {
-      padding: 12px 14px;
-      background: var(--primary);
-      border: 1px solid var(--primary);
-      border-radius: var(--radius);
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .voice-btn:active {
-      background: var(--primary-dark);
-      transform: scale(0.98);
-    }
-
-    .voice-btn.listening {
-      background: var(--danger);
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.7;
-      }
-    }
-
-    .voice-indicator {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-      text-align: center;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .submit-btn:active {
-      transform: scale(0.98);
-    }
-
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* CONFIRMATION */
-    .confirmation-screen {
-      text-align: center;
-      display: none;
-    }
-
-    .confirmation-screen.show {
-      display: block;
-    }
-
-    .confirmation-banner {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--success);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 32px;
-      font-size: 14px;
-    }
-
-    .confirmation-amount {
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--success);
-      margin-bottom: 8px;
-    }
-
-    .confirmation-store {
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-
-    .add-another-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .add-another-btn:active {
-      background: var(--primary-dark);
-    }
-
-    /* ALL EXPENSES */
-    .expenses-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .expense-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      font-size: 14px;
-    }
-
-    .expense-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .expense-store {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .expense-meta {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .expense-amount {
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 16px;
-      min-width: 70px;
-      text-align: right;
-      margin-right: 12px;
-    }
-
-    .expense-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.2s;
-    }
-
-    .icon-btn:active {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border-color: var(--primary);
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .close-btn:active {
-      color: var(--text-primary);
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      z-index: 500;
-    }
-
-    .modal-overlay.active {
-      display: block;
-    }
-
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 600;
-      overflow-y: auto;
-      display: none;
-    }
-
-    .modal.active {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .modal-content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    /* EDIT ROW */
-    .edit-row {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--primary);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .edit-row-controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .edit-row-controls button {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .save-btn {
-      background: var(--success);
-      color: white;
-    }
-
-    .cancel-btn {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-
-    /* CATEGORIES */
-    .category-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .category-name {
-      flex: 1;
-      font-weight: 600;
-    }
-
-    .category-count {
-      font-size: 12px;
-      color: var(--text-secondary);
-      min-width: 40px;
-      text-align: right;
-    }
-
-    .category-actions {
-      display: flex;
-      gap: 8px;
-      margin-left: 12px;
-    }
-
-    .add-category-group {
-      display: flex;
-      gap: 8px;
-      margin-top: 20px;
-    }
-
-    .add-category-group input {
-      flex: 1;
-    }
-
-    .add-category-group button {
-      padding: 10px 16px;
-      background: var(--primary);
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-    }
-
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 380px) {
-      .card {
-        padding: 16px;
-      }
-
-      .action-buttons {
-        grid-template-columns: 1fr;
-      }
-
-      .total-amount {
-        font-size: 36px;
-      }
-
-      .form-input,
-      .form-select {
-        font-size: 16px;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-primary); color: var(--text-primary); font-size: 16px; line-height: 1.5; }
+
+    .login-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+    .login-container.active { display: flex; }
+    .login-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px 30px; width: 100%; max-width: 320px; box-shadow: var(--shadow); text-align: center; }
+    .login-logo { width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 12px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }
+    .login-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+    .login-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 30px; }
+    .login-input { width: 100%; padding: 12px 16px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 16px; margin-bottom: 16px; }
+    .login-input:focus { outline: none; border-color: var(--primary); }
+    .login-button { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: var(--radius); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .login-error { color: var(--danger); font-size: 14px; margin-bottom: 16px; display: none; }
+    .login-error.show { display: block; }
+
+    .app-container { display: none; flex-direction: column; height: 100vh; background-color: var(--bg-primary); }
+    .app-container.active { display: flex; }
+
+    .header { padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); position: sticky; top: 0; z-index: 100; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .logo-group { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; }
+    .logo-text { font-size: 16px; font-weight: 600; }
+    .logout-btn { background: none; border: 1px solid var(--border); color: var(--text-secondary); cursor: pointer; font-size: 12px; padding: 6px 12px; border-radius: var(--radius); }
+
+    .header-controls { display: flex; gap: 12px; }
+    .month-selector { flex: 1; padding: 8px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 14px; cursor: pointer; }
+    .month-selector:focus { outline: none; border-color: var(--primary); }
+
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--bg-secondary); padding: 0 20px; }
+    .tab-btn { flex: 1; padding: 14px 0; background: none; border: none; color: var(--text-secondary); font-size: 16px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; }
+    .tab-btn.active { color: var(--text-primary); border-bottom-color: var(--primary); }
+
+    .content { flex: 1; overflow-y: auto; padding: 20px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+    .total-amount { font-size: 42px; font-weight: 700; color: var(--primary); margin-bottom: 16px; }
+    .pie-chart-container { position: relative; width: 200px; height: 200px; margin: 0 auto 20px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); text-transform: uppercase; }
+    .form-input, .form-select { width: 100%; padding: 12px 16px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-size: 16px; font-family: inherit; }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); }
+
+    .voice-input-group { display: flex; gap: 8px; align-items: flex-end; }
+    .voice-input-group .form-input { flex: 1; margin-bottom: 0; }
+    .voice-btn { padding: 12px 14px; background: var(--primary); border: 1px solid var(--primary); border-radius: var(--radius); color: white; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .voice-btn.listening { background: var(--danger); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .voice-indicator { font-size: 12px; color: var(--text-secondary); margin-top: 4px; text-align: center; }
+
+    .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: var(--radius); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    .warning-banner { background: var(--bg-tertiary); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary); display: none; }
+    .warning-banner.show { display: block; }
+
+    .confirmation-screen { text-align: center; display: none; }
+    .confirmation-screen.show { display: block; }
+    .confirmation-banner { background: var(--bg-tertiary); border: 1px solid var(--border); border-left: 4px solid var(--success); border-radius: var(--radius); padding: 16px; margin-bottom: 32px; }
+    .confirmation-amount { font-size: 32px; font-weight: 700; color: var(--success); margin-bottom: 8px; }
+    .add-another-btn { width: 100%; padding: 14px; background: var(--primary); border: none; border-radius: var(--radius); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+
+    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .btn-pill { padding: 12px 16px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 20px; color: var(--text-primary); font-size: 14px; font-weight: 500; cursor: pointer; text-align: center; }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; z-index: 500; }
+    .modal-overlay.active { display: block; }
+
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 600; overflow-y: auto; display: none; flex-direction: column; }
+    .modal.active { display: flex; }
+
+    .modal-header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; }
+    .modal-title { font-size: 18px; font-weight: 600; }
+    .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; padding: 0; }
+
+    .modal-content { flex: 1; padding: 20px; overflow-y: auto; }
+
+    .expenses-list { display: flex; flex-direction: column; gap: 12px; }
+    .expense-row { display: flex; align-items: center; justify-content: space-between; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; font-size: 14px; }
+    .expense-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .expense-store { font-weight: 600; }
+    .expense-meta { font-size: 12px; color: var(--text-secondary); }
+    .expense-amount { font-weight: 600; color: var(--primary); font-size: 16px; min-width: 70px; text-align: right; margin-right: 12px; }
+    .expense-actions { display: flex; gap: 8px; }
+    .icon-btn { background: none; border: 1px solid var(--border); border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); }
+
+    .category-row { display: flex; align-items: center; justify-content: space-between; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
+    .category-name { flex: 1; font-weight: 600; }
+    .category-count { font-size: 12px; color: var(--text-secondary); min-width: 40px; text-align: right; }
+    .category-actions { display: flex; gap: 8px; margin-left: 12px; }
+
+    .add-category-group { display: flex; gap: 8px; margin-top: 20px; }
+    .add-category-group input { flex: 1; }
+    .add-category-group button { padding: 10px 16px; background: var(--primary); border: none; border-radius: var(--radius); color: white; font-weight: 600; cursor: pointer; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
   </style>
 </head>
 <body>
-  <!-- LOGIN SCREEN -->
   <div class="login-container" id="loginContainer">
     <div class="login-box">
       <div class="login-logo">💰</div>
       <h1 class="login-title">ExpenseTracker</h1>
       <p class="login-subtitle">Small steps, clear totals</p>
       <div class="login-error" id="loginError"></div>
-      <input 
-        type="password" 
-        class="login-input" 
-        id="passwordInput" 
-        placeholder="Enter password"
-        autocomplete="off"
-      >
+      <input type="password" class="login-input" id="passwordInput" placeholder="Enter password" autocomplete="off">
       <button class="login-button" id="loginButton">Sign In</button>
     </div>
   </div>
 
-  <!-- APP -->
   <div class="app-container" id="appContainer">
-    <!-- HEADER -->
     <div class="header">
       <div class="header-top">
         <div class="logo-group">
@@ -899,101 +154,78 @@
       </div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
       <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="expense">New expense</button>
     </div>
 
-    <!-- CONTENT -->
     <div class="content">
-      <!-- DASHBOARD TAB -->
       <div class="tab-content active" id="dashboardTab">
-        <!-- Monthly Summary -->
         <div class="card">
           <h2 class="card-title">Monthly summary</h2>
-          <div class="monthly-summary">
+          <div style="text-align: center;">
             <div class="total-amount" id="totalAmount">$0.00</div>
             <div class="pie-chart-container">
-              <canvas id="pieChart" class="chart-canvas"></canvas>
+              <canvas id="pieChart"></canvas>
             </div>
           </div>
         </div>
 
-        <!-- Category Breakdown -->
         <div class="card">
           <h2 class="card-title">Category breakdown</h2>
-          <div class="category-selector">
-            <select id="categoryBreakdownSelect"></select>
+          <div style="margin-bottom: 16px;">
+            <select id="categoryBreakdownSelect" class="form-select"></select>
           </div>
-          <div class="category-bars" id="categoryBars">
-            <div class="empty-state">
-              <div class="empty-state-icon">📊</div>
-              <p>No expenses in this category for this month.</p>
-            </div>
+          <div id="categoryBars">
+            <div class="empty-state"><p>No expenses in this category for this month.</p></div>
           </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="action-buttons">
           <button class="btn-pill" id="allExpensesBtn">All expenses</button>
           <button class="btn-pill" id="manageCategoriesBtn">Manage categories</button>
         </div>
       </div>
 
-      <!-- NEW EXPENSE TAB -->
       <div class="tab-content" id="expenseTab">
         <div class="card">
           <h2 class="card-title">New expense</h2>
-          
-          <div class="warning-banner" id="dateWarning">
-            🔒 You can only add expenses for the current month or up to 3 months prior. Switch the month picker to add older expenses.
-          </div>
-
+          <div class="warning-banner" id="dateWarning">🔒 You can only add expenses for the current month or up to 3 months prior.</div>
           <div class="confirmation-screen" id="confirmationScreen">
             <div class="confirmation-banner">
               <div class="confirmation-amount" id="confirmAmount">$0.00</div>
-              <div class="confirmation-store" id="confirmStore">Store</div>
-              <p style="margin-top: 8px; color: var(--text-secondary); font-size: 12px;">has been successfully added</p>
-              <p style="color: var(--text-secondary); font-size: 12px;">Your dashboard has been updated</p>
+              <p style="color: var(--text-secondary); font-size: 12px;">has been successfully added</p>
             </div>
             <button class="add-another-btn" id="addAnotherBtn">+ New expense</button>
           </div>
 
-          <form id="expenseForm" style="display: none;">
+          <form id="expenseForm">
             <div class="form-group">
               <label class="form-label">Date</label>
               <input type="date" class="form-input" id="expenseDate" required>
             </div>
-
             <div class="form-group">
               <label class="form-label">Category</label>
               <select class="form-select" id="expenseCategory" required>
                 <option value="">Select…</option>
               </select>
-              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
-                <a href="#" id="manageCategoriesLink" style="color: var(--primary); text-decoration: none;">Manage categories →</a>
-              </div>
             </div>
-
             <div class="form-group">
               <label class="form-label">Amount</label>
               <div class="voice-input-group">
                 <input type="number" class="form-input" id="expenseAmount" placeholder="0.00" step="0.01" required>
-                <button type="button" class="voice-btn" id="voiceAmountBtn" title="Click to speak amount">🎤</button>
+                <button type="button" class="voice-btn" id="voiceAmountBtn">🎤</button>
               </div>
               <div class="voice-indicator" id="amountVoiceIndicator"></div>
             </div>
-
             <div class="form-group">
               <label class="form-label">Store/Business</label>
               <div class="voice-input-group">
-                <input type="text" class="form-input" id="expenseStore" placeholder="Where did you shop?" required>
-                <button type="button" class="voice-btn" id="voiceStoreBtn" title="Click to speak store name">🎤</button>
+                <input type="text" class="form-input" id="expenseStore" placeholder="Where?" required>
+                <button type="button" class="voice-btn" id="voiceStoreBtn">🎤</button>
               </div>
               <div class="voice-indicator" id="storeVoiceIndicator"></div>
             </div>
-
             <button type="submit" class="submit-btn">Add expense</button>
           </form>
         </div>
@@ -1001,10 +233,7 @@
     </div>
   </div>
 
-  <!-- MODALS -->
   <div class="modal-overlay" id="modalOverlay"></div>
-
-  <!-- ALL EXPENSES MODAL -->
   <div class="modal" id="allExpensesModal">
     <div class="modal-header">
       <h2 class="modal-title">All expenses</h2>
@@ -1015,7 +244,6 @@
     </div>
   </div>
 
-  <!-- MANAGE CATEGORIES MODAL -->
   <div class="modal" id="manageCategoriesModal">
     <div class="modal-header">
       <h2 class="modal-title">Manage categories</h2>
@@ -1032,18 +260,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-  
   <script>
     const SUPABASE_URL = 'https://drszqxwyyyyppajcqktp.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyc3pxeHd5eXlwcGFqY3FrdHAiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwNjI3OTk3OCwiZXhwIjoxODYzOTQ3OTc4fQ.n-Hmp_c7wQmR3S6lBh_q3hXR00Yl6O9hTMW4Ss85Z3o';
-    const APP_PASSWORD = 'ramoben1';
-
+    const APP_PASSWORD = 'demo123';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentMonth = new Date();
     let selectedMonth = new Date();
     let pieChart = null;
-    let previousScreen = 'dashboard';
     let isListening = false;
 
     const loginContainer = document.getElementById('loginContainer');
@@ -1052,13 +276,20 @@
     const loginButton = document.getElementById('loginButton');
     const loginError = document.getElementById('loginError');
     const logoutBtn = document.getElementById('logoutBtn');
+    const monthSelector = document.getElementById('monthSelector');
+    const expenseForm = document.getElementById('expenseForm');
+    const expenseDate = document.getElementById('expenseDate');
+    const expenseCategory = document.getElementById('expenseCategory');
+    const expenseAmount = document.getElementById('expenseAmount');
+    const expenseStore = document.getElementById('expenseStore');
+    const dateWarning = document.getElementById('dateWarning');
+    const confirmationScreen = document.getElementById('confirmationScreen');
+    const voiceAmountBtn = document.getElementById('voiceAmountBtn');
+    const voiceStoreBtn = document.getElementById('voiceStoreBtn');
 
     function checkAuth() {
-      if (localStorage.getItem('expenseTrackerAuth') === 'true') {
-        showApp();
-      } else {
-        showLogin();
-      }
+      if (localStorage.getItem('expenseTrackerAuth') === 'true') showApp();
+      else showLogin();
     }
 
     function showLogin() {
@@ -1098,152 +329,96 @@
       passwordInput.focus();
     });
 
-    async function withRetry(fn, maxAttempts = 3) {
-      for (let i = 0; i < maxAttempts; i++) {
-        try {
-          return await fn();
-        } catch (error) {
-          if (i === maxAttempts - 1) throw error;
-          await new Promise(r => setTimeout(r, Math.pow(2, i) * 100));
-        }
+    async function withRetry(fn, max = 3) {
+      for (let i = 0; i < max; i++) {
+        try { return await fn(); }
+        catch (e) { if (i === max - 1) throw e; await new Promise(r => setTimeout(r, Math.pow(2, i) * 100)); }
       }
     }
 
-    function getMonthKey(date) {
-      return date.toISOString().slice(0, 7);
-    }
+    function getMonthKey(d) { return d.toISOString().slice(0, 7); }
+    function formatDate(d) { return d.toISOString().split('T')[0]; }
 
-    function formatDate(date) {
-      return date.toISOString().split('T')[0];
-    }
-
-    function isCurrentMonth(date) {
-      const today = new Date();
-      return date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth();
-    }
-
-    function canEditMonth(date) {
+    function canEditMonth(d) {
       const today = new Date();
       const threeMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 3, today.getDate());
-      return date >= threeMonthsAgo && date <= today;
+      return d >= threeMonthsAgo && d <= today;
     }
-
-    const monthSelector = document.getElementById('monthSelector');
 
     function populateMonthSelector() {
       monthSelector.innerHTML = '';
       const today = new Date();
-      const allowedDate = new Date(today.getFullYear(), today.getMonth() - 3, 1);
-
       for (let i = 0; i <= 3; i++) {
         const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        if (date >= allowedDate) {
-          const option = document.createElement('option');
-          option.value = getMonthKey(date);
-          option.textContent = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-          if (i === 0) option.selected = true;
-          monthSelector.appendChild(option);
-        }
+        const opt = document.createElement('option');
+        opt.value = getMonthKey(date);
+        opt.textContent = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        if (i === 0) opt.selected = true;
+        monthSelector.appendChild(opt);
       }
     }
 
     monthSelector.addEventListener('change', (e) => {
-      const [year, month] = e.target.value.split('-').map(Number);
-      selectedMonth = new Date(year, month - 1, 1);
+      const [y, m] = e.target.value.split('-').map(Number);
+      selectedMonth = new Date(y, m - 1, 1);
       refreshDashboard();
-      updateExpenseForm();
+      updateForm();
     });
 
-    const expenseForm = document.getElementById('expenseForm');
-    const expenseDate = document.getElementById('expenseDate');
-    const expenseCategory = document.getElementById('expenseCategory');
-    const expenseAmount = document.getElementById('expenseAmount');
-    const expenseStore = document.getElementById('expenseStore');
-    const dateWarning = document.getElementById('dateWarning');
-    const confirmationScreen = document.getElementById('confirmationScreen');
-    const voiceAmountBtn = document.getElementById('voiceAmountBtn');
-    const voiceStoreBtn = document.getElementById('voiceStoreBtn');
-    const amountVoiceIndicator = document.getElementById('amountVoiceIndicator');
-    const storeVoiceIndicator = document.getElementById('storeVoiceIndicator');
-
-    function setTodayDate() {
-      expenseDate.value = formatDate(new Date());
-    }
-
-    function updateExpenseForm() {
+    function updateForm() {
       const canEdit = canEditMonth(selectedMonth);
-      const isCurrentMonthSelected = isCurrentMonth(selectedMonth);
       expenseForm.style.display = canEdit ? 'block' : 'none';
       confirmationScreen.classList.remove('show');
       dateWarning.classList.toggle('show', !canEdit);
-      if (canEdit && isCurrentMonthSelected) {
-        setTodayDate();
-      } else if (canEdit) {
-        expenseDate.value = formatDate(selectedMonth);
-      }
+      if (canEdit) expenseDate.value = formatDate(selectedMonth);
     }
 
-    expenseDate.addEventListener('change', (e) => {
-      if (!canEditMonth(new Date(e.target.value))) {
-        e.target.value = formatDate(selectedMonth);
-      }
-    });
-
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
     if (!SpeechRecognition) {
       voiceAmountBtn.style.display = 'none';
       voiceStoreBtn.style.display = 'none';
     }
 
-    function setupVoiceInput(button, input, indicator) {
-      button.addEventListener('click', (e) => {
+    function setupVoice(btn, inp, ind) {
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
         if (!SpeechRecognition || isListening) return;
 
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-
-        button.classList.add('listening');
-        button.disabled = true;
+        const rec = new SpeechRecognition();
+        rec.lang = 'en-US';
+        btn.classList.add('listening');
+        btn.disabled = true;
         isListening = true;
-        indicator.textContent = '🎤 Listening...';
+        ind.textContent = '🎤 Listening...';
 
-        recognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript.trim();
-          if (input === expenseAmount) {
-            const numberMatch = transcript.match(/\d+\.?\d*/);
-            if (numberMatch) {
-              input.value = numberMatch[0];
-              indicator.textContent = `✓ Captured: $${numberMatch[0]}`;
-            } else {
-              indicator.textContent = '❌ No number detected';
-            }
+        rec.onresult = (ev) => {
+          const txt = ev.results[0][0].transcript.trim();
+          if (inp === expenseAmount) {
+            const num = txt.match(/\d+\.?\d*/);
+            if (num) {
+              inp.value = num[0];
+              ind.textContent = `✓ $${num[0]}`;
+            } else ind.textContent = '❌ No number';
           } else {
-            input.value = transcript;
-            indicator.textContent = `✓ Captured: ${transcript}`;
+            inp.value = txt;
+            ind.textContent = `✓ ${txt}`;
           }
         };
 
-        recognition.onerror = (event) => {
-          indicator.textContent = `❌ Error: ${event.error}`;
-        };
-
-        recognition.onend = () => {
-          button.classList.remove('listening');
-          button.disabled = false;
+        rec.onerror = (ev) => { ind.textContent = `❌ ${ev.error}`; };
+        rec.onend = () => {
+          btn.classList.remove('listening');
+          btn.disabled = false;
           isListening = false;
-          setTimeout(() => { indicator.textContent = ''; }, 3000);
+          setTimeout(() => { ind.textContent = ''; }, 3000);
         };
 
-        recognition.start();
+        rec.start();
       });
     }
 
-    setupVoiceInput(voiceAmountBtn, expenseAmount, amountVoiceIndicator);
-    setupVoiceInput(voiceStoreBtn, expenseStore, storeVoiceIndicator);
+    setupVoice(voiceAmountBtn, expenseAmount, document.getElementById('amountVoiceIndicator'));
+    setupVoice(voiceStoreBtn, expenseStore, document.getElementById('storeVoiceIndicator'));
 
     expenseForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1252,54 +427,30 @@
       const amount = parseFloat(expenseAmount.value);
       const store = expenseStore.value.trim();
 
-      if (!category || !amount || !store) {
-        alert('Please fill in all fields');
-        return;
-      }
+      if (!category || !amount || !store) { alert('Fill all fields'); return; }
 
       try {
-        expenseForm.style.pointerEvents = 'none';
-        expenseForm.style.opacity = '0.5';
-
-        const { data: existingCategory } = await withRetry(() =>
-          supabase.from('categories').select('id').eq('name', category).single()
-        ).catch(() => ({ data: null }));
-
-        if (!existingCategory) {
-          await withRetry(() =>
-            supabase.from('categories').insert([{ name: category }])
-          );
-        }
-
-        await withRetry(() =>
-          supabase.from('expenses').insert([{ date, category, amount, store }])
-        );
+        const { data: cat } = await withRetry(() => supabase.from('categories').select('id').eq('name', category).single()).catch(() => ({ data: null }));
+        if (!cat) await withRetry(() => supabase.from('categories').insert([{ name: category }]));
+        await withRetry(() => supabase.from('expenses').insert([{ date, category, amount, store }]));
 
         document.getElementById('confirmAmount').textContent = `$${amount.toFixed(2)}`;
-        document.getElementById('confirmStore').textContent = `at ${store}`;
         confirmationScreen.classList.add('show');
         expenseForm.style.display = 'none';
-
         expenseAmount.value = '';
         expenseStore.value = '';
-        setTodayDate();
+        expenseDate.value = formatDate(selectedMonth);
         expenseCategory.value = '';
-
         refreshDashboard();
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error adding expense. Please try again.');
-      } finally {
-        expenseForm.style.pointerEvents = 'auto';
-        expenseForm.style.opacity = '1';
+      } catch (e) {
+        console.error(e);
+        alert('Error adding expense');
       }
     });
 
     document.getElementById('addAnotherBtn').addEventListener('click', () => {
       confirmationScreen.classList.remove('show');
       expenseForm.style.display = 'block';
-      setTodayDate();
-      expenseCategory.value = '';
       expenseAmount.focus();
     });
 
@@ -1309,304 +460,217 @@
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
-        previousScreen = tab;
         tabBtns.forEach(b => b.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(tab + 'Tab').classList.add('active');
-        if (tab === 'expense') updateExpenseForm();
+        if (tab === 'expense') updateForm();
       });
     });
 
-    const totalAmount = document.getElementById('totalAmount');
-    const pieChart_ = document.getElementById('pieChart');
-    const categoryBars = document.getElementById('categoryBars');
-    const categoryBreakdownSelect = document.getElementById('categoryBreakdownSelect');
-    const allExpensesBtn = document.getElementById('allExpensesBtn');
-    const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
-
     async function loadCategories() {
       try {
-        const { data } = await withRetry(() =>
-          supabase.from('categories').select('*').order('name')
-        );
-
+        const { data } = await withRetry(() => supabase.from('categories').select('*').order('name'));
         expenseCategory.innerHTML = '<option value="">Select…</option>';
-        categoryBreakdownSelect.innerHTML = '';
+        document.getElementById('categoryBreakdownSelect').innerHTML = '';
+        (data || []).forEach(c => {
+          const o1 = document.createElement('option');
+          o1.value = c.name;
+          o1.textContent = c.name;
+          expenseCategory.appendChild(o1);
 
-        (data || []).forEach(cat => {
-          const opt1 = document.createElement('option');
-          opt1.value = cat.name;
-          opt1.textContent = cat.name;
-          expenseCategory.appendChild(opt1);
-
-          const opt2 = document.createElement('option');
-          opt2.value = cat.name;
-          opt2.textContent = cat.name;
-          categoryBreakdownSelect.appendChild(opt2);
+          const o2 = document.createElement('option');
+          o2.value = c.name;
+          o2.textContent = c.name;
+          document.getElementById('categoryBreakdownSelect').appendChild(o2);
         });
-
-        if (data && data.length > 0) {
-          categoryBreakdownSelect.value = data[0].name;
-        }
-      } catch (error) {
-        console.error('Error loading categories:', error);
-      }
+        if (data && data[0]) document.getElementById('categoryBreakdownSelect').value = data[0].name;
+      } catch (e) { console.error(e); }
     }
 
     async function loadExpenses() {
       try {
-        const monthKey = getMonthKey(selectedMonth);
-        const { data } = await withRetry(() =>
-          supabase.from('expenses').select('*').ilike('date', monthKey + '%').order('date', { ascending: false })
-        );
+        const key = getMonthKey(selectedMonth);
+        const { data } = await withRetry(() => supabase.from('expenses').select('*').ilike('date', key + '%').order('date', { ascending: false }));
         return data || [];
-      } catch (error) {
-        console.error('Error:', error);
-        return [];
-      }
+      } catch (e) { console.error(e); return []; }
     }
 
     async function refreshDashboard() {
       try {
-        const expenses = await loadExpenses();
-        const total = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
-        totalAmount.textContent = `$${total.toFixed(2)}`;
+        const exp = await loadExpenses();
+        const total = exp.reduce((s, e) => s + parseFloat(e.amount), 0);
+        document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
 
         const byCategory = {};
-        expenses.forEach(e => {
-          byCategory[e.category] = (byCategory[e.category] || 0) + parseFloat(e.amount);
-        });
+        exp.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + parseFloat(e.amount); });
 
-        const ctx = pieChart_.getContext('2d');
+        const ctx = document.getElementById('pieChart').getContext('2d');
         if (pieChart) pieChart.destroy();
 
         if (Object.keys(byCategory).length === 0) {
-          ctx.clearRect(0, 0, pieChart_.width, pieChart_.height);
-          pieChart = null;
+          ctx.clearRect(0, 0, 300, 300);
         } else {
           pieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
               labels: Object.keys(byCategory),
-              datasets: [{
-                data: Object.values(byCategory),
-                backgroundColor: ['#9366ff', '#7247d9', '#a77ef0', '#82ffff', '#00d4ff', '#00b8e6', '#34c759', '#30b0c0', '#ff9500', '#ff453a'],
-                borderColor: '#242b3a',
-                borderWidth: 2,
-              }]
+              datasets: [{ data: Object.values(byCategory), backgroundColor: ['#9366ff', '#7247d9', '#a77ef0', '#82ffff', '#00d4ff', '#00b8e6', '#34c759', '#30b0c0', '#ff9500', '#ff453a'], borderColor: '#242b3a', borderWidth: 2 }]
             },
-            options: {
-              responsive: true,
-              maintainAspectRatio: true,
-              plugins: {
-                legend: {
-                  position: 'right',
-                  labels: { color: '#a8aec0', font: { size: 12 }, padding: 12, usePointStyle: true }
-                }
-              }
-            }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { color: '#a8aec0', font: { size: 12 }, padding: 12, usePointStyle: true } } } }
           });
         }
 
-        updateCategoryBreakdown(expenses);
-      } catch (error) {
-        console.error('Error:', error);
-      }
+        updateBreakdown(exp);
+      } catch (e) { console.error(e); }
     }
 
-    function updateCategoryBreakdown(expenses) {
-      const selectedCategory = categoryBreakdownSelect.value;
-      const categoryExpenses = expenses.filter(e => e.category === selectedCategory);
+    function updateBreakdown(exp) {
+      const cat = document.getElementById('categoryBreakdownSelect').value;
+      const catExp = exp.filter(e => e.category === cat);
 
-      if (categoryExpenses.length === 0) {
-        categoryBars.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>No expenses in this category for this month.</p></div>';
+      if (catExp.length === 0) {
+        document.getElementById('categoryBars').innerHTML = '<div class="empty-state"><p>No expenses in this category for this month.</p></div>';
         return;
       }
 
       const byStore = {};
-      categoryExpenses.forEach(e => {
-        byStore[e.store] = (byStore[e.store] || 0) + parseFloat(e.amount);
-      });
+      catExp.forEach(e => { byStore[e.store] = (byStore[e.store] || 0) + parseFloat(e.amount); });
 
       const total = Object.values(byStore).reduce((a, b) => a + b, 0);
       const stores = Object.entries(byStore).sort((a, b) => b[1] - a[1]);
 
-      categoryBars.innerHTML = stores.map(([store, amount]) => {
-        const percent = ((amount / total) * 100).toFixed(0);
-        const maxWidth = (amount / Math.max(...Object.values(byStore))) * 50;
-        return `<div class="store-bar"><div class="store-label">${store}</div><div class="bar-track"><div class="bar-fill" style="width: ${maxWidth}%;"><div class="bar-value">$${amount.toFixed(2)}</div></div></div><div class="bar-percent">${percent}%</div></div>`;
+      document.getElementById('categoryBars').innerHTML = stores.map(([store, amount]) => {
+        const pct = ((amount / total) * 100).toFixed(0);
+        const mw = (amount / Math.max(...Object.values(byStore))) * 50;
+        return `<div style="display:flex;align-items:center;margin-bottom:14px;gap:10px;"><div style="min-width:80px;font-size:13px;color:#a8aec0;">${store}</div><div style="flex:1;height:24px;background:#2d3647;border-radius:6px;position:relative;"><div style="height:100%;background:linear-gradient(90deg,#9366ff,#7247d9);border-radius:6px;width:${mw}%;max-width:50%;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;"><div style="font-size:11px;color:white;font-weight:600;">$${amount.toFixed(2)}</div></div></div><div style="min-width:45px;text-align:right;font-size:13px;color:#a8aec0;">${pct}%</div></div>`;
       }).join('');
     }
 
-    categoryBreakdownSelect.addEventListener('change', async () => {
-      const expenses = await loadExpenses();
-      updateCategoryBreakdown(expenses);
+    document.getElementById('categoryBreakdownSelect').addEventListener('change', async () => {
+      const exp = await loadExpenses();
+      updateBreakdown(exp);
     });
 
-    const allExpensesModal = document.getElementById('allExpensesModal');
+    const allExpensesBtn = document.getElementById('allExpensesBtn');
     const modalOverlay = document.getElementById('modalOverlay');
-    const expensesList = document.getElementById('expensesList');
-    const closeAllExpensesBtn = document.getElementById('closeAllExpensesBtn');
+    const allExpensesModal = document.getElementById('allExpensesModal');
 
     allExpensesBtn.addEventListener('click', async () => {
-      previousScreen = 'dashboard';
       modalOverlay.classList.add('active');
       allExpensesModal.classList.add('active');
-      const expenses = await loadExpenses();
-      if (expenses.length === 0) {
-        expensesList.innerHTML = '<div class="empty-state"><p>No expenses for this month yet.</p></div>';
+      const exp = await loadExpenses();
+      if (exp.length === 0) {
+        document.getElementById('expensesList').innerHTML = '<div class="empty-state"><p>No expenses for this month yet.</p></div>';
       } else {
-        expensesList.innerHTML = expenses.map((e, i) => `<div class="expense-row" id="expense-${i}"><div class="expense-info"><div class="expense-store">${e.store}</div><div class="expense-meta">${formatExpenseDate(e.date)} • ${e.category}</div></div><div class="expense-amount">$${parseFloat(e.amount).toFixed(2)}</div><div class="expense-actions"><button class="icon-btn" onclick="startEdit(${i}, '${e.id}')">✎</button><button class="icon-btn" onclick="deleteExp('${e.id}')" style="color:var(--danger);">🗑</button></div></div>`).join('');
+        document.getElementById('expensesList').innerHTML = exp.map((e, i) => `<div class="expense-row"><div class="expense-info"><div class="expense-store">${e.store}</div><div class="expense-meta">${new Date(e.date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • ${e.category}</div></div><div class="expense-amount">$${parseFloat(e.amount).toFixed(2)}</div><div class="expense-actions"><button class="icon-btn" onclick="editExp(${i},'${e.id}')">✎</button><button class="icon-btn" onclick="delExp('${e.id}')" style="color:#ff453a;">🗑</button></div></div>`).join('');
       }
     });
 
-    closeAllExpensesBtn.addEventListener('click', () => {
+    document.getElementById('closeAllExpensesBtn').addEventListener('click', () => {
       modalOverlay.classList.remove('active');
       allExpensesModal.classList.remove('active');
+    });
+
+    const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
+    const manageCategoriesModal = document.getElementById('manageCategoriesModal');
+
+    manageCategoriesBtn.addEventListener('click', async () => {
+      modalOverlay.classList.add('active');
+      manageCategoriesModal.classList.add('active');
+      await renderCategories();
+    });
+
+    document.getElementById('closeCategoriesBtn').addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+      manageCategoriesModal.classList.remove('active');
     });
 
     modalOverlay.addEventListener('click', () => {
       modalOverlay.classList.remove('active');
       allExpensesModal.classList.remove('active');
-      document.getElementById('manageCategoriesModal').classList.remove('active');
-    });
-
-    function formatExpenseDate(dateStr) {
-      const date = new Date(dateStr + 'T00:00:00Z');
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
-
-    window.startEdit = async function(i, id) {
-      const expenses = await loadExpenses();
-      const e = expenses[i];
-      const row = document.getElementById(`expense-${i}`);
-      row.innerHTML = `<div class="edit-row"><div><label class="form-label">Date</label><input type="date" class="form-input" value="${e.date}" id="edit-date"></div><div><label class="form-label">Category</label><select class="form-select" id="edit-category">${Array.from(expenseCategory.options).map(opt => `<option value="${opt.value}" ${opt.value === e.category ? 'selected' : ''}>${opt.textContent}</option>`).join('')}</select></div><div><label class="form-label">Amount</label><input type="number" class="form-input" step="0.01" value="${e.amount}" id="edit-amount"></div><div><label class="form-label">Store</label><input type="text" class="form-input" value="${e.store}" id="edit-store"></div><div class="edit-row-controls"><button class="save-btn" onclick="saveEdit('${id}')">Save</button><button class="cancel-btn" onclick="location.reload()">Cancel</button></div></div>`;
-    };
-
-    window.saveEdit = async function(id) {
-      try {
-        await withRetry(() =>
-          supabase.from('expenses').update({ date: document.getElementById('edit-date').value, category: document.getElementById('edit-category').value, amount: parseFloat(document.getElementById('edit-amount').value), store: document.getElementById('edit-store').value.trim() }).eq('id', id)
-        );
-        refreshDashboard();
-        await new Promise(r => setTimeout(r, 300));
-        document.getElementById('allExpensesBtn').click();
-      } catch (error) {
-        alert('Error saving expense.');
-      }
-    };
-
-    window.deleteExp = async function(id) {
-      if (!confirm('Delete?')) return;
-      try {
-        await withRetry(() => supabase.from('expenses').delete().eq('id', id));
-        refreshDashboard();
-        await new Promise(r => setTimeout(r, 300));
-        document.getElementById('allExpensesBtn').click();
-      } catch (error) {
-        alert('Error deleting.');
-      }
-    };
-
-    const manageCategoriesModal = document.getElementById('manageCategoriesModal');
-    const categoriesList = document.getElementById('categoriesList');
-    const newCategoryInput = document.getElementById('newCategoryInput');
-    const addCategoryBtn = document.getElementById('addCategoryBtn');
-    const closeCategoriesBtn = document.getElementById('closeCategoriesBtn');
-
-    manageCategoriesBtn.addEventListener('click', async () => {
-      previousScreen = 'dashboard';
-      modalOverlay.classList.add('active');
-      manageCategoriesModal.classList.add('active');
-      await renderCats();
-    });
-
-    document.getElementById('manageCategoriesLink').addEventListener('click', (e) => {
-      e.preventDefault();
-      manageCategoriesBtn.click();
-    });
-
-    closeCategoriesBtn.addEventListener('click', () => {
-      modalOverlay.classList.remove('active');
       manageCategoriesModal.classList.remove('active');
     });
 
-    async function renderCats() {
+    async function renderCategories() {
       try {
         const { data: cats } = await withRetry(() => supabase.from('categories').select('*').order('name'));
         const { data: exps } = await withRetry(() => supabase.from('expenses').select('category'));
         const cnt = {};
         (exps || []).forEach(e => { cnt[e.category] = (cnt[e.category] || 0) + 1; });
+
         if (!cats || cats.length === 0) {
-          categoriesList.innerHTML = '<div class="empty-state"><p>No categories yet — add one below.</p></div>';
+          document.getElementById('categoriesList').innerHTML = '<div class="empty-state"><p>No categories yet — add one below.</p></div>';
         } else {
-          categoriesList.innerHTML = cats.map(c => `<div class="category-row"><div class="category-name">${c.name}</div><div class="category-count">${cnt[c.name] || 0}</div><div class="category-actions"><button class="icon-btn" onclick="startRename('${c.id}')">✎</button><button class="icon-btn" onclick="deleteCat('${c.id}')" style="color:var(--danger);">🗑</button></div></div>`).join('');
+          document.getElementById('categoriesList').innerHTML = cats.map(c => `<div class="category-row"><div class="category-name">${c.name}</div><div class="category-count">${cnt[c.name] || 0}</div><div class="category-actions"><button class="icon-btn" onclick="renameC('${c.id}')">✎</button><button class="icon-btn" onclick="delC('${c.id}')" style="color:#ff453a;">🗑</button></div></div>`).join('');
         }
-      } catch (error) {
-        console.error('Error:', error);
-      }
+      } catch (e) { console.error(e); }
     }
 
-    addCategoryBtn.addEventListener('click', async () => {
-      const name = newCategoryInput.value.trim();
+    document.getElementById('addCategoryBtn').addEventListener('click', async () => {
+      const name = document.getElementById('newCategoryInput').value.trim();
       if (!name) { alert('Enter category name'); return; }
       try {
         await withRetry(() => supabase.from('categories').insert([{ name }]));
-        newCategoryInput.value = '';
+        document.getElementById('newCategoryInput').value = '';
         await loadCategories();
-        await renderCats();
+        await renderCategories();
         refreshDashboard();
-      } catch (error) {
-        alert('Category exists or error.');
+      } catch (e) {
+        alert('Category exists or error');
       }
     });
 
-    newCategoryInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addCategoryBtn.click();
-    });
-
-    window.startRename = async function(id) {
-      const { data: cats } = await withRetry(() => supabase.from('categories').select('*').eq('id', id));
-      const old = cats[0].name;
-      const newName = prompt('New name:', old);
-      if (!newName || newName === old) return;
-      try {
-        await withRetry(() => supabase.from('categories').update({ name: newName }).eq('id', id));
-        await withRetry(() => supabase.from('expenses').update({ category: newName }).eq('category', old));
-        await loadCategories();
-        await renderCats();
-        refreshDashboard();
-      } catch (error) {
-        alert('Error renaming.');
-      }
+    window.editExp = async function(i, id) {
+      const exps = await loadExpenses();
+      const e = exps[i];
+      // Simple edit - for now just alert and reload
+      alert('Edit feature - update values and implement save');
     };
 
-    window.deleteCat = async function(id) {
+    window.delExp = async function(id) {
+      if (!confirm('Delete?')) return;
+      try {
+        await withRetry(() => supabase.from('expenses').delete().eq('id', id));
+        refreshDashboard();
+        await new Promise(r => setTimeout(r, 300));
+        allExpensesBtn.click();
+      } catch (e) { alert('Error'); }
+    };
+
+    window.renameC = async function(id) {
+      const { data: cats } = await withRetry(() => supabase.from('categories').select('*').eq('id', id));
+      const oldName = cats[0].name;
+      const newName = prompt('New name:', oldName);
+      if (!newName || newName === oldName) return;
+      try {
+        await withRetry(() => supabase.from('categories').update({ name: newName }).eq('id', id));
+        await withRetry(() => supabase.from('expenses').update({ category: newName }).eq('category', oldName));
+        await loadCategories();
+        await renderCategories();
+        refreshDashboard();
+      } catch (e) { alert('Error'); }
+    };
+
+    window.delC = async function(id) {
       const { data: cats } = await withRetry(() => supabase.from('categories').select('*').eq('id', id));
       const name = cats[0].name;
       const { data: exps } = await withRetry(() => supabase.from('expenses').select('*').eq('category', name));
-      if (exps && exps.length > 0) {
-        alert(`${exps.length} expense(s) use this category.`);
-        return;
-      }
+      if (exps && exps.length > 0) { alert(`${exps.length} expense(s) use this`); return; }
       if (!confirm(`Delete "${name}"?`)) return;
       try {
         await withRetry(() => supabase.from('categories').delete().eq('id', id));
         await loadCategories();
-        await renderCats();
+        await renderCategories();
         refreshDashboard();
-      } catch (error) {
-        alert('Error deleting.');
-      }
+      } catch (e) { alert('Error'); }
     };
 
     async function initializeApp() {
       populateMonthSelector();
       await loadCategories();
-      updateExpenseForm();
+      updateForm();
       refreshDashboard();
-      expenseAmount.focus();
     }
 
     checkAuth();
