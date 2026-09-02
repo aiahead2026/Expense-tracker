@@ -1034,22 +1034,18 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   
   <script>
-    // ==================== CONFIG ====================
     const SUPABASE_URL = 'https://drszqxwyyyyppajcqktp.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyc3pxeHd5eXlwcGFqY3FrdHAiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwNjI3OTk3OCwiZXhwIjoxODYzOTQ3OTc4fQ.n-Hmp_c7wQmR3S6lBh_q3hXR00Yl6O9hTMW4Ss85Z3o';
-    const APP_PASSWORD = 'demo123'; // Change this to your desired password
+    const APP_PASSWORD = 'ramoben1';
 
-    // ==================== STATE ====================
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     let currentMonth = new Date();
     let selectedMonth = new Date();
     let pieChart = null;
     let previousScreen = 'dashboard';
     let isListening = false;
-    
-    // ==================== SUPABASE ====================
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ==================== AUTH ====================
     const loginContainer = document.getElementById('loginContainer');
     const appContainer = document.getElementById('appContainer');
     const passwordInput = document.getElementById('passwordInput');
@@ -1058,8 +1054,7 @@
     const logoutBtn = document.getElementById('logoutBtn');
 
     function checkAuth() {
-      const isAuthenticated = localStorage.getItem('expenseTrackerAuth') === 'true';
-      if (isAuthenticated) {
+      if (localStorage.getItem('expenseTrackerAuth') === 'true') {
         showApp();
       } else {
         showLogin();
@@ -1079,11 +1074,8 @@
 
     loginButton.addEventListener('click', (e) => {
       e.preventDefault();
-      const password = passwordInput.value.trim();
-      
-      if (password === APP_PASSWORD) {
+      if (passwordInput.value.trim() === APP_PASSWORD) {
         localStorage.setItem('expenseTrackerAuth', 'true');
-        loginError.textContent = '';
         loginError.classList.remove('show');
         passwordInput.value = '';
         showApp();
@@ -1095,21 +1087,17 @@
     });
 
     passwordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        loginButton.click();
-      }
+      if (e.key === 'Enter') loginButton.click();
     });
 
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('expenseTrackerAuth');
       passwordInput.value = '';
-      loginError.textContent = '';
       loginError.classList.remove('show');
       showLogin();
       passwordInput.focus();
     });
 
-    // ==================== RETRY LOGIC ====================
     async function withRetry(fn, maxAttempts = 3) {
       for (let i = 0; i < maxAttempts; i++) {
         try {
@@ -1121,7 +1109,6 @@
       }
     }
 
-    // ==================== DATE HELPERS ====================
     function getMonthKey(date) {
       return date.toISOString().slice(0, 7);
     }
@@ -1132,8 +1119,7 @@
 
     function isCurrentMonth(date) {
       const today = new Date();
-      return date.getFullYear() === today.getFullYear() &&
-             date.getMonth() === today.getMonth();
+      return date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth();
     }
 
     function canEditMonth(date) {
@@ -1142,7 +1128,6 @@
       return date >= threeMonthsAgo && date <= today;
     }
 
-    // ==================== MONTH SELECTOR ====================
     const monthSelector = document.getElementById('monthSelector');
 
     function populateMonthSelector() {
@@ -1169,7 +1154,6 @@
       updateExpenseForm();
     });
 
-    // ==================== EXPENSE FORM ====================
     const expenseForm = document.getElementById('expenseForm');
     const expenseDate = document.getElementById('expenseDate');
     const expenseCategory = document.getElementById('expenseCategory');
@@ -1183,18 +1167,15 @@
     const storeVoiceIndicator = document.getElementById('storeVoiceIndicator');
 
     function setTodayDate() {
-      const today = new Date();
-      expenseDate.value = formatDate(today);
+      expenseDate.value = formatDate(new Date());
     }
 
     function updateExpenseForm() {
       const canEdit = canEditMonth(selectedMonth);
       const isCurrentMonthSelected = isCurrentMonth(selectedMonth);
-      
       expenseForm.style.display = canEdit ? 'block' : 'none';
       confirmationScreen.classList.remove('show');
       dateWarning.classList.toggle('show', !canEdit);
-
       if (canEdit && isCurrentMonthSelected) {
         setTodayDate();
       } else if (canEdit) {
@@ -1203,13 +1184,11 @@
     }
 
     expenseDate.addEventListener('change', (e) => {
-      const selectedDate = new Date(e.target.value);
-      if (!canEditMonth(selectedDate)) {
+      if (!canEditMonth(new Date(e.target.value))) {
         e.target.value = formatDate(selectedMonth);
       }
     });
 
-    // ==================== VOICE INPUT ====================
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     
     if (!SpeechRecognition) {
@@ -1220,13 +1199,7 @@
     function setupVoiceInput(button, input, indicator) {
       button.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        if (!SpeechRecognition) {
-          alert('Voice input not supported in your browser');
-          return;
-        }
-
-        if (isListening) return;
+        if (!SpeechRecognition || isListening) return;
 
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -1240,21 +1213,17 @@
 
         recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript.trim();
-          
           if (input === expenseAmount) {
-            // Extract number from speech
             const numberMatch = transcript.match(/\d+\.?\d*/);
             if (numberMatch) {
               input.value = numberMatch[0];
               indicator.textContent = `✓ Captured: $${numberMatch[0]}`;
-              input.focus();
             } else {
               indicator.textContent = '❌ No number detected';
             }
           } else {
             input.value = transcript;
             indicator.textContent = `✓ Captured: ${transcript}`;
-            input.focus();
           }
         };
 
@@ -1266,9 +1235,7 @@
           button.classList.remove('listening');
           button.disabled = false;
           isListening = false;
-          setTimeout(() => {
-            indicator.textContent = '';
-          }, 3000);
+          setTimeout(() => { indicator.textContent = ''; }, 3000);
         };
 
         recognition.start();
@@ -1278,10 +1245,8 @@
     setupVoiceInput(voiceAmountBtn, expenseAmount, amountVoiceIndicator);
     setupVoiceInput(voiceStoreBtn, expenseStore, storeVoiceIndicator);
 
-    // ==================== FORM SUBMISSION ====================
     expenseForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const date = expenseDate.value;
       const category = expenseCategory.value;
       const amount = parseFloat(expenseAmount.value);
@@ -1296,7 +1261,6 @@
         expenseForm.style.pointerEvents = 'none';
         expenseForm.style.opacity = '0.5';
 
-        // Ensure category exists
         const { data: existingCategory } = await withRetry(() =>
           supabase.from('categories').select('id').eq('name', category).single()
         ).catch(() => ({ data: null }));
@@ -1307,32 +1271,23 @@
           );
         }
 
-        // Insert expense
         await withRetry(() =>
-          supabase.from('expenses').insert([{
-            date,
-            category,
-            amount,
-            store
-          }])
+          supabase.from('expenses').insert([{ date, category, amount, store }])
         );
 
-        // Show confirmation
         document.getElementById('confirmAmount').textContent = `$${amount.toFixed(2)}`;
         document.getElementById('confirmStore').textContent = `at ${store}`;
         confirmationScreen.classList.add('show');
         expenseForm.style.display = 'none';
 
-        // Reset form
         expenseAmount.value = '';
         expenseStore.value = '';
         setTodayDate();
         expenseCategory.value = '';
 
-        // Refresh dashboard
         refreshDashboard();
       } catch (error) {
-        console.error('Error adding expense:', error);
+        console.error('Error:', error);
         alert('Error adding expense. Please try again.');
       } finally {
         expenseForm.style.pointerEvents = 'auto';
@@ -1348,7 +1303,6 @@
       expenseAmount.focus();
     });
 
-    // ==================== TABS ====================
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -1356,20 +1310,14 @@
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         previousScreen = tab;
-        
         tabBtns.forEach(b => b.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
-        
         btn.classList.add('active');
         document.getElementById(tab + 'Tab').classList.add('active');
-
-        if (tab === 'expense') {
-          updateExpenseForm();
-        }
+        if (tab === 'expense') updateExpenseForm();
       });
     });
 
-    // ==================== DASHBOARD ====================
     const totalAmount = document.getElementById('totalAmount');
     const pieChart_ = document.getElementById('pieChart');
     const categoryBars = document.getElementById('categoryBars');
@@ -1387,22 +1335,19 @@
         categoryBreakdownSelect.innerHTML = '';
 
         (data || []).forEach(cat => {
-          const option = document.createElement('option');
-          option.value = cat.name;
-          option.textContent = cat.name;
-          expenseCategory.appendChild(option);
+          const opt1 = document.createElement('option');
+          opt1.value = cat.name;
+          opt1.textContent = cat.name;
+          expenseCategory.appendChild(opt1);
 
-          const breakdownOption = document.createElement('option');
-          breakdownOption.value = cat.name;
-          breakdownOption.textContent = cat.name;
-          categoryBreakdownSelect.appendChild(breakdownOption);
+          const opt2 = document.createElement('option');
+          opt2.value = cat.name;
+          opt2.textContent = cat.name;
+          categoryBreakdownSelect.appendChild(opt2);
         });
 
         if (data && data.length > 0) {
-          categoryBreakdownSelect.value = 'Groceries';
-          if (!Array.from(categoryBreakdownSelect.options).some(o => o.value === 'Groceries')) {
-            categoryBreakdownSelect.value = data[0].name;
-          }
+          categoryBreakdownSelect.value = data[0].name;
         }
       } catch (error) {
         console.error('Error loading categories:', error);
@@ -1413,16 +1358,11 @@
       try {
         const monthKey = getMonthKey(selectedMonth);
         const { data } = await withRetry(() =>
-          supabase
-            .from('expenses')
-            .select('*')
-            .ilike('date', monthKey + '%')
-            .order('date', { ascending: false })
+          supabase.from('expenses').select('*').ilike('date', monthKey + '%').order('date', { ascending: false })
         );
-
         return data || [];
       } catch (error) {
-        console.error('Error loading expenses:', error);
+        console.error('Error:', error);
         return [];
       }
     }
@@ -1430,19 +1370,15 @@
     async function refreshDashboard() {
       try {
         const expenses = await loadExpenses();
-        
-        // Update total
         const total = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
         totalAmount.textContent = `$${total.toFixed(2)}`;
 
-        // Update pie chart
         const byCategory = {};
         expenses.forEach(e => {
           byCategory[e.category] = (byCategory[e.category] || 0) + parseFloat(e.amount);
         });
 
         const ctx = pieChart_.getContext('2d');
-        
         if (pieChart) pieChart.destroy();
 
         if (Object.keys(byCategory).length === 0) {
@@ -1455,10 +1391,7 @@
               labels: Object.keys(byCategory),
               datasets: [{
                 data: Object.values(byCategory),
-                backgroundColor: [
-                  '#9366ff', '#7247d9', '#a77ef0', '#82ffff', '#00d4ff',
-                  '#00b8e6', '#34c759', '#30b0c0', '#ff9500', '#ff453a'
-                ],
+                backgroundColor: ['#9366ff', '#7247d9', '#a77ef0', '#82ffff', '#00d4ff', '#00b8e6', '#34c759', '#30b0c0', '#ff9500', '#ff453a'],
                 borderColor: '#242b3a',
                 borderWidth: 2,
               }]
@@ -1469,22 +1402,16 @@
               plugins: {
                 legend: {
                   position: 'right',
-                  labels: {
-                    color: '#a8aec0',
-                    font: { size: 12 },
-                    padding: 12,
-                    usePointStyle: true,
-                  }
+                  labels: { color: '#a8aec0', font: { size: 12 }, padding: 12, usePointStyle: true }
                 }
               }
             }
           });
         }
 
-        // Update category breakdown
         updateCategoryBreakdown(expenses);
       } catch (error) {
-        console.error('Error refreshing dashboard:', error);
+        console.error('Error:', error);
       }
     }
 
@@ -1508,17 +1435,7 @@
       categoryBars.innerHTML = stores.map(([store, amount]) => {
         const percent = ((amount / total) * 100).toFixed(0);
         const maxWidth = (amount / Math.max(...Object.values(byStore))) * 50;
-        return `
-          <div class="store-bar">
-            <div class="store-label">${escapeHtml(store)}</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width: ${maxWidth}%;">
-                <div class="bar-value">$${amount.toFixed(2)}</div>
-              </div>
-            </div>
-            <div class="bar-percent">${percent}%</div>
-          </div>
-        `;
+        return `<div class="store-bar"><div class="store-label">${store}</div><div class="bar-track"><div class="bar-fill" style="width: ${maxWidth}%;"><div class="bar-value">$${amount.toFixed(2)}</div></div></div><div class="bar-percent">${percent}%</div></div>`;
       }).join('');
     }
 
@@ -1527,7 +1444,6 @@
       updateCategoryBreakdown(expenses);
     });
 
-    // ==================== ALL EXPENSES MODAL ====================
     const allExpensesModal = document.getElementById('allExpensesModal');
     const modalOverlay = document.getElementById('modalOverlay');
     const expensesList = document.getElementById('expensesList');
@@ -1537,27 +1453,12 @@
       previousScreen = 'dashboard';
       modalOverlay.classList.add('active');
       allExpensesModal.classList.add('active');
-
       const expenses = await loadExpenses();
-      
       if (expenses.length === 0) {
         expensesList.innerHTML = '<div class="empty-state"><p>No expenses for this month yet.</p></div>';
-        return;
+      } else {
+        expensesList.innerHTML = expenses.map((e, i) => `<div class="expense-row" id="expense-${i}"><div class="expense-info"><div class="expense-store">${e.store}</div><div class="expense-meta">${formatExpenseDate(e.date)} • ${e.category}</div></div><div class="expense-amount">$${parseFloat(e.amount).toFixed(2)}</div><div class="expense-actions"><button class="icon-btn" onclick="startEdit(${i}, '${e.id}')">✎</button><button class="icon-btn" onclick="deleteExp('${e.id}')" style="color:var(--danger);">🗑</button></div></div>`).join('');
       }
-
-      expensesList.innerHTML = expenses.map((expense, index) => `
-        <div class="expense-row" id="expense-${index}">
-          <div class="expense-info">
-            <div class="expense-store">${escapeHtml(expense.store)}</div>
-            <div class="expense-meta">${formatExpenseDate(expense.date)} • ${escapeHtml(expense.category)}</div>
-          </div>
-          <div class="expense-amount">$${parseFloat(expense.amount).toFixed(2)}</div>
-          <div class="expense-actions">
-            <button class="icon-btn" onclick="startEditExpense(${index}, '${escapeHtml(expense.id).replace(/'/g, "\\'")}')">✎</button>
-            <button class="icon-btn" onclick="deleteExpense('${escapeHtml(expense.id).replace(/'/g, "\\'")}')" style="color: var(--danger);">🗑</button>
-          </div>
-        </div>
-      `).join('');
     });
 
     closeAllExpensesBtn.addEventListener('click', () => {
@@ -1576,96 +1477,38 @@
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // ==================== EDIT & DELETE ====================
-    window.startEditExpense = async function(index, expenseId) {
+    window.startEdit = async function(i, id) {
       const expenses = await loadExpenses();
-      const expense = expenses[index];
-      
-      const row = document.getElementById(`expense-${index}`);
-      row.innerHTML = `
-        <div class="edit-row">
-          <div>
-            <label class="form-label">Date</label>
-            <input type="date" class="form-input" value="${expense.date}" id="edit-date">
-          </div>
-          <div>
-            <label class="form-label">Category</label>
-            <select class="form-select" id="edit-category">
-              ${Array.from(expenseCategory.options).map(opt => 
-                `<option value="${opt.value}" ${opt.value === expense.category ? 'selected' : ''}>${opt.textContent}</option>`
-              ).join('')}
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Amount</label>
-            <input type="number" class="form-input" step="0.01" value="${expense.amount}" id="edit-amount">
-          </div>
-          <div>
-            <label class="form-label">Store</label>
-            <input type="text" class="form-input" value="${escapeHtml(expense.store)}" id="edit-store">
-          </div>
-          <div class="edit-row-controls">
-            <button class="save-btn" onclick="saveExpenseEdit('${escapeHtml(expenseId).replace(/'/g, "\\'")}')">Save</button>
-            <button class="cancel-btn" onclick="location.reload()">Cancel</button>
-          </div>
-        </div>
-      `;
+      const e = expenses[i];
+      const row = document.getElementById(`expense-${i}`);
+      row.innerHTML = `<div class="edit-row"><div><label class="form-label">Date</label><input type="date" class="form-input" value="${e.date}" id="edit-date"></div><div><label class="form-label">Category</label><select class="form-select" id="edit-category">${Array.from(expenseCategory.options).map(opt => `<option value="${opt.value}" ${opt.value === e.category ? 'selected' : ''}>${opt.textContent}</option>`).join('')}</select></div><div><label class="form-label">Amount</label><input type="number" class="form-input" step="0.01" value="${e.amount}" id="edit-amount"></div><div><label class="form-label">Store</label><input type="text" class="form-input" value="${e.store}" id="edit-store"></div><div class="edit-row-controls"><button class="save-btn" onclick="saveEdit('${id}')">Save</button><button class="cancel-btn" onclick="location.reload()">Cancel</button></div></div>`;
     };
 
-    window.saveExpenseEdit = async function(expenseId) {
-      const date = document.getElementById('edit-date').value;
-      const category = document.getElementById('edit-category').value;
-      const amount = parseFloat(document.getElementById('edit-amount').value);
-      const store = document.getElementById('edit-store').value.trim();
-
+    window.saveEdit = async function(id) {
       try {
         await withRetry(() =>
-          supabase
-            .from('expenses')
-            .update({ date, category, amount, store })
-            .eq('id', expenseId)
+          supabase.from('expenses').update({ date: document.getElementById('edit-date').value, category: document.getElementById('edit-category').value, amount: parseFloat(document.getElementById('edit-amount').value), store: document.getElementById('edit-store').value.trim() }).eq('id', id)
         );
-
         refreshDashboard();
         await new Promise(r => setTimeout(r, 300));
-        
-        const allExpensesBtn2 = document.getElementById('allExpensesBtn');
-        allExpensesBtn2.click();
+        document.getElementById('allExpensesBtn').click();
       } catch (error) {
-        console.error('Error updating expense:', error);
-        alert('Error saving expense. Please try again.');
+        alert('Error saving expense.');
       }
     };
 
-    window.deleteExpense = async function(expenseId) {
-      if (!confirm('Delete this expense?')) return;
-
+    window.deleteExp = async function(id) {
+      if (!confirm('Delete?')) return;
       try {
-        await withRetry(() =>
-          supabase
-            .from('expenses')
-            .delete()
-            .eq('id', expenseId)
-        );
-
+        await withRetry(() => supabase.from('expenses').delete().eq('id', id));
         refreshDashboard();
         await new Promise(r => setTimeout(r, 300));
-        
-        const allExpensesBtn2 = document.getElementById('allExpensesBtn');
-        allExpensesBtn2.click();
+        document.getElementById('allExpensesBtn').click();
       } catch (error) {
-        console.error('Error deleting expense:', error);
-        alert('Error deleting expense. Please try again.');
+        alert('Error deleting.');
       }
     };
 
-    // ==================== MANAGE CATEGORIES ====================
     const manageCategoriesModal = document.getElementById('manageCategoriesModal');
     const categoriesList = document.getElementById('categoriesList');
     const newCategoryInput = document.getElementById('newCategoryInput');
@@ -1676,7 +1519,7 @@
       previousScreen = 'dashboard';
       modalOverlay.classList.add('active');
       manageCategoriesModal.classList.add('active');
-      await renderCategories();
+      await renderCats();
     });
 
     document.getElementById('manageCategoriesLink').addEventListener('click', (e) => {
@@ -1689,60 +1532,33 @@
       manageCategoriesModal.classList.remove('active');
     });
 
-    async function renderCategories() {
+    async function renderCats() {
       try {
-        const { data: categories } = await withRetry(() =>
-          supabase.from('categories').select('*').order('name')
-        );
-
-        const { data: expenses } = await withRetry(() =>
-          supabase.from('expenses').select('category')
-        );
-
-        const expenseCount = {};
-        (expenses || []).forEach(e => {
-          expenseCount[e.category] = (expenseCount[e.category] || 0) + 1;
-        });
-
-        if (!categories || categories.length === 0) {
+        const { data: cats } = await withRetry(() => supabase.from('categories').select('*').order('name'));
+        const { data: exps } = await withRetry(() => supabase.from('expenses').select('category'));
+        const cnt = {};
+        (exps || []).forEach(e => { cnt[e.category] = (cnt[e.category] || 0) + 1; });
+        if (!cats || cats.length === 0) {
           categoriesList.innerHTML = '<div class="empty-state"><p>No categories yet — add one below.</p></div>';
-          return;
+        } else {
+          categoriesList.innerHTML = cats.map(c => `<div class="category-row"><div class="category-name">${c.name}</div><div class="category-count">${cnt[c.name] || 0}</div><div class="category-actions"><button class="icon-btn" onclick="startRename('${c.id}')">✎</button><button class="icon-btn" onclick="deleteCat('${c.id}')" style="color:var(--danger);">🗑</button></div></div>`).join('');
         }
-
-        categoriesList.innerHTML = categories.map(cat => `
-          <div class="category-row">
-            <div class="category-name">${escapeHtml(cat.name)}</div>
-            <div class="category-count">${expenseCount[cat.name] || 0}</div>
-            <div class="category-actions">
-              <button class="icon-btn" onclick="startRenameCategory('${escapeHtml(cat.id).replace(/'/g, "\\'")}')" title="Rename">✎</button>
-              <button class="icon-btn" onclick="deleteCategory('${escapeHtml(cat.id).replace(/'/g, "\\'")}')" style="color: var(--danger);" title="Delete">🗑</button>
-            </div>
-          </div>
-        `).join('');
       } catch (error) {
-        console.error('Error rendering categories:', error);
+        console.error('Error:', error);
       }
     }
 
     addCategoryBtn.addEventListener('click', async () => {
       const name = newCategoryInput.value.trim();
-      if (!name) {
-        alert('Please enter a category name');
-        return;
-      }
-
+      if (!name) { alert('Enter category name'); return; }
       try {
-        await withRetry(() =>
-          supabase.from('categories').insert([{ name }])
-        );
-
+        await withRetry(() => supabase.from('categories').insert([{ name }]));
         newCategoryInput.value = '';
         await loadCategories();
-        await renderCategories();
+        await renderCats();
         refreshDashboard();
       } catch (error) {
-        console.error('Error adding category:', error);
-        alert('Category already exists or error occurred');
+        alert('Category exists or error.');
       }
     });
 
@@ -1750,69 +1566,41 @@
       if (e.key === 'Enter') addCategoryBtn.click();
     });
 
-    window.startRenameCategory = async function(categoryId) {
-      const { data: categories } = await withRetry(() =>
-        supabase.from('categories').select('*').eq('id', categoryId)
-      );
-
-      const oldName = categories[0].name;
-      const newName = prompt('New category name:', oldName);
-      if (!newName || newName === oldName) return;
-
+    window.startRename = async function(id) {
+      const { data: cats } = await withRetry(() => supabase.from('categories').select('*').eq('id', id));
+      const old = cats[0].name;
+      const newName = prompt('New name:', old);
+      if (!newName || newName === old) return;
       try {
-        await withRetry(() =>
-          supabase.from('categories').update({ name: newName }).eq('id', categoryId)
-        );
-
-        await withRetry(() =>
-          supabase
-            .from('expenses')
-            .update({ category: newName })
-            .eq('category', oldName)
-        );
-
+        await withRetry(() => supabase.from('categories').update({ name: newName }).eq('id', id));
+        await withRetry(() => supabase.from('expenses').update({ category: newName }).eq('category', old));
         await loadCategories();
-        await renderCategories();
+        await renderCats();
         refreshDashboard();
       } catch (error) {
-        console.error('Error renaming category:', error);
-        alert('Error renaming category');
+        alert('Error renaming.');
       }
     };
 
-    window.deleteCategory = async function(categoryId) {
-      const { data: categories } = await withRetry(() =>
-        supabase.from('categories').select('*').eq('id', categoryId)
-      );
-
-      const catName = categories[0].name;
-
-      const { data: expenses } = await withRetry(() =>
-        supabase.from('expenses').select('*').eq('category', catName)
-      );
-
-      if (expenses && expenses.length > 0) {
-        alert(`This category is used by ${expenses.length} expense(s) and cannot be deleted until they are removed or recategorized.`);
+    window.deleteCat = async function(id) {
+      const { data: cats } = await withRetry(() => supabase.from('categories').select('*').eq('id', id));
+      const name = cats[0].name;
+      const { data: exps } = await withRetry(() => supabase.from('expenses').select('*').eq('category', name));
+      if (exps && exps.length > 0) {
+        alert(`${exps.length} expense(s) use this category.`);
         return;
       }
-
-      if (!confirm(`Delete category "${catName}"?`)) return;
-
+      if (!confirm(`Delete "${name}"?`)) return;
       try {
-        await withRetry(() =>
-          supabase.from('categories').delete().eq('id', categoryId)
-        );
-
+        await withRetry(() => supabase.from('categories').delete().eq('id', id));
         await loadCategories();
-        await renderCategories();
+        await renderCats();
         refreshDashboard();
       } catch (error) {
-        console.error('Error deleting category:', error);
-        alert('Error deleting category');
+        alert('Error deleting.');
       }
     };
 
-    // ==================== INITIALIZE ====================
     async function initializeApp() {
       populateMonthSelector();
       await loadCategories();
@@ -1821,7 +1609,6 @@
       expenseAmount.focus();
     }
 
-    // ==================== STARTUP ====================
     checkAuth();
   </script>
 </body>
