@@ -365,29 +365,35 @@
   .done-shopping-btn{
     width:100%; border:none; background:linear-gradient(135deg,#3fe0c4,#2bb89f); color:#0e0f16;
     font-size:20px; font-weight:800; padding:15px; border-radius:14px; cursor:pointer;
-    font-family:inherit; box-shadow:0 8px 22px rgba(63,224,196,.3); margin-bottom:18px;
+    font-family:inherit; box-shadow:0 8px 22px rgba(63,224,196,.3); margin-top:8px;
   }
   .done-shopping-btn:active{ opacity:.85; }
 
-  .shopping-cat{ margin-bottom:24px; }
+  .shopping-cat{
+    background:var(--accent-soft);
+    border:1px solid #33324f;
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:16px;
+  }
   .shopping-cat-head{
-    display:flex; align-items:center; gap:10px; margin-bottom:8px;
-    padding-bottom:9px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:10px; margin-bottom:6px;
+    padding-bottom:10px; border-bottom:1px solid var(--border);
   }
   .shopping-cat-head h3{ flex:1; margin:0; font-size:18.5px; font-weight:800; color:var(--ink); }
   .add-to-cat-btn{
     flex:0 0 auto; width:32px; height:32px; border-radius:9px;
-    border:1px solid #33324f; background:var(--accent-soft); color:#c9c2ff;
+    border:1px solid #3a3a5c; background:#2b2950; color:#c9c2ff;
     font-size:24px; line-height:1; display:flex; align-items:center; justify-content:center;
     cursor:pointer; font-family:inherit;
   }
-  .add-to-cat-btn:active{ background:#2b2950; }
+  .add-to-cat-btn:active{ background:#35326a; }
 
   .shopping-item{
-    display:flex; align-items:center; gap:12px; padding:11px 4px;
-    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:12px; padding:11px 2px;
+    border-bottom:1px solid #33324f;
   }
-  .shopping-item:last-child{ border-bottom:none; }
+  .shopping-item:last-child{ border-bottom:none; padding-bottom:2px; }
   .shopping-item input[type="checkbox"]{
     flex:0 0 auto; width:24px; height:24px; accent-color:var(--accent-2); cursor:pointer;
   }
@@ -600,8 +606,8 @@
         <button class="icon-btn" id="closeShoppingBtn" aria-label="Close">✕</button>
       </div>
       <div class="error-note" id="shoppingErrorNote"></div>
-      <button class="done-shopping-btn" id="doneShoppingBtn" style="display:none;">Done shopping</button>
       <div id="shoppingCategories"></div>
+      <button class="done-shopping-btn" id="doneShoppingBtn" style="display:none;">Done shopping</button>
     </section>
 
     <!-- SCREEN 7: HISTORY -->
