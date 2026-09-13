@@ -60,20 +60,20 @@
             z-index: 100;
         }
 
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .logo-section {
-            flex: 1;
+        .header-logo {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .logo {
@@ -104,11 +104,7 @@
             font-size: 14px;
             cursor: pointer;
             flex: 1;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 8px;
+            min-width: 0;
         }
 
         .icon-btn {
@@ -736,15 +732,13 @@
     <div class="app-container">
         <!-- HEADER -->
         <header>
-            <div class="header-top">
-                <div class="logo-section">
-                    <div class="logo">📊</div>
-                    <div class="app-title">ExpenseTracker</div>
-                </div>
+            <div class="header-logo">
+                <div class="logo">📊</div>
+                <div class="app-title">ExpenseTracker</div>
+            </div>
+            <div class="header-controls">
                 <select id="monthSelector" class="month-selector"></select>
-                <div class="header-icons">
-                    <button id="shoppingListBtn" class="icon-btn" title="Shopping List">📋</button>
-                </div>
+                <button id="shoppingListBtn" class="icon-btn" title="Shopping List">📋</button>
             </div>
             <div class="tabs">
                 <button class="tab active" data-tab="dashboard">Dashboard</button>
