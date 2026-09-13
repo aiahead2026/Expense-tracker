@@ -451,11 +451,6 @@
   }
   textarea#itemsTextarea:focus{ outline:none; border-color:var(--accent); background:#23253a; }
 
-  .archived-cat-block{ margin-bottom:18px; }
-  .archived-cat-block:last-child{ margin-bottom:0; }
-  .archived-cat-block h3{ margin:0 0 6px 0; font-size:15.5px; font-weight:800; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; }
-  .archived-item{ font-size:18px; font-weight:600; color:var(--ink); padding:5px 2px; border-bottom:1px solid var(--border); }
-  .archived-item:last-child{ border-bottom:none; }
   .history-date{ flex:1; font-size:18px; font-weight:700; color:var(--ink); }
 </style>
 </head>
@@ -656,9 +651,7 @@
         <button class="icon-btn" id="closeArchivedBtn" aria-label="Close">✕</button>
       </div>
       <div class="error-note" id="archivedErrorNote"></div>
-      <div class="card">
-        <div id="archivedDetailContent"></div>
-      </div>
+      <div id="archivedDetailContent"></div>
       <div class="edit-actions">
         <button class="cancel-btn" id="archivedCloseBtn2" type="button">Close</button>
         <button class="save-btn" id="reuseListBtn" type="button">Re-use</button>
@@ -1946,6 +1939,11 @@
     let items = [];
     try{ items = JSON.parse(h.items_json) || []; }catch(e){ items = []; }
 
+    const d = new Date(h.date_archived);
+    const label = d.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric", year:"numeric" })
+      + " · " + d.toLocaleTimeString(undefined, { hour:"numeric", minute:"2-digit" });
+    document.getElementById("archivedDetailTitle").textContent = label;
+
     const content = document.getElementById("archivedDetailContent");
     content.innerHTML = "";
 
@@ -1961,9 +1959,20 @@
     } else {
       cats.forEach(cat => {
         const block = document.createElement("div");
-        block.className = "archived-cat-block";
-        block.innerHTML = `<h3>${escapeHtml(cat)}</h3>`
-          + byCat[cat].map(t => `<div class="archived-item">${escapeHtml(t)}</div>`).join("");
+        block.className = "shopping-cat";
+
+        const head = document.createElement("div");
+        head.className = "shopping-cat-head";
+        head.innerHTML = `<h3>${escapeHtml(cat)}</h3>`;
+        block.appendChild(head);
+
+        byCat[cat].forEach(text => {
+          const row = document.createElement("div");
+          row.className = "shopping-item";
+          row.innerHTML = `<span class="item-text">${escapeHtml(text)}</span>`;
+          block.appendChild(row);
+        });
+
         content.appendChild(block);
       });
     }
