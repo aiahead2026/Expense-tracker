@@ -707,6 +707,20 @@
     "Household & Personal care","Meat & Seafood","Pantry & Dry goods","Produce","Snacks"
   ];
 
+  // Category-specific placeholder examples for the add-items textarea
+  const CATEGORY_EXAMPLES = {
+    "Bakery & Bread": ["Sourdough loaf", "Bagels", "Croissants"],
+    "Beverages": ["Orange juice", "Sparkling water", "Coffee beans"],
+    "Cheese": ["Cheddar", "Mozzarella", "Parmesan"],
+    "Dairy & eggs": ["Milk", "Eggs", "Yogurt"],
+    "Frozen foods": ["Frozen peas", "Ice cream", "Frozen pizza"],
+    "Household & Personal care": ["Paper towels", "Dish soap", "Toothpaste"],
+    "Meat & Seafood": ["Chicken breast", "Ground beef", "Salmon fillet"],
+    "Pantry & Dry goods": ["Pasta", "Rice", "Olive oil"],
+    "Produce": ["Bananas", "Spinach", "Tomatoes"],
+    "Snacks": ["Tortilla chips", "Almonds", "Granola bars"]
+  };
+
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, c => ({
       "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
@@ -1862,10 +1876,12 @@
   function openAddItems(cat){
     addItemsCategory = cat;
     document.getElementById("addItemsTitle").textContent = cat;
-    document.getElementById("itemsTextarea").value = "";
+    const ta = document.getElementById("itemsTextarea");
+    ta.value = "";
+    const examples = CATEGORY_EXAMPLES[cat];
+    ta.placeholder = examples ? ("e.g.\n" + examples.join("\n")) : "One item per line";
     document.getElementById("addItemsModal").classList.add("active");
     setTimeout(() => {
-      const ta = document.getElementById("itemsTextarea");
       if(ta) ta.focus();
     }, 60);
   }
